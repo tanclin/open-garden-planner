@@ -59,6 +59,7 @@ class GalleryItem:
         species: str = "",
         plant_category: PlantCategory | None = None,
         icon_name: str = "",
+        species_record: dict | None = None,
     ) -> None:
         self.name = name
         self.tool_type = tool_type
@@ -69,6 +70,7 @@ class GalleryItem:
         # Non-empty when the thumbnail came from a themed UI icon — marks the
         # item for re-rendering on theme switch (refresh_icon_thumbnails).
         self.icon_name = icon_name
+        self.species_record = species_record
 
 
 class GalleryCategory:

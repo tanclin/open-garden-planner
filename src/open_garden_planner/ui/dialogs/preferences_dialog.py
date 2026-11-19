@@ -274,11 +274,22 @@ class PreferencesDialog(QDialog):
             )
         )
         canvas_layout.addRow(self._touch_gestures_check)
+        self._gallery_plant_filters_check = QCheckBox(self.tr("Show plant gallery filters"))
+        canvas_layout.addRow(self._gallery_plant_filters_check)
+        self._hide_plant_svg_icons = QCheckBox(self.tr("Hide custom plant SVG icons"))
+        canvas_layout.addRow(self._hide_plant_svg_icons)
+        self._plant_map_icons_fixed = QCheckBox(self.tr("Keep plant icons the same size when zooming"))
+        canvas_layout.addRow(self._plant_map_icons_fixed)
+        self._plant_map_icon_size = QSpinBox()
+        canvas_layout.addRow(self.tr("Plant icon size"), self._plant_map_icon_size)
 
         layout.addWidget(canvas_group)
 
         # --- Agent API (US-D1.1) ---
         from open_garden_planner.app.settings import AppSettings
+        self._plant_map_icon_size.setRange(
+            AppSettings.PLANT_MAP_ICON_SIZE_MIN, AppSettings.PLANT_MAP_ICON_SIZE_MAX,
+        )
 
         agent_group = QGroupBox(self.tr("Agent API"))
         agent_layout = QFormLayout(agent_group)
@@ -481,6 +492,10 @@ class PreferencesDialog(QDialog):
         self._frost_red_spin.setValue(settings.frost_warning_red_c)
         self._notify_overdue_check.setChecked(settings.notify_overdue_tasks_on_startup)
         self._touch_gestures_check.setChecked(settings.touch_gestures_enabled)
+        self._gallery_plant_filters_check.setChecked(settings.show_gallery_plant_filters)
+        self._hide_plant_svg_icons.setChecked(settings.hide_plant_svg_icons)
+        self._plant_map_icons_fixed.setChecked(settings.plant_map_icons_fixed)
+        self._plant_map_icon_size.setValue(settings.plant_map_icon_size)
         self._agent_api_check.setChecked(settings.agent_api_enabled)
         self._agent_api_port_spin.setValue(settings.agent_api_port)
         self._agent_api_writes_check.setChecked(settings.agent_api_writes_enabled)
@@ -605,6 +620,10 @@ class PreferencesDialog(QDialog):
         settings.frost_warning_red_c = self._frost_red_spin.value()
         settings.notify_overdue_tasks_on_startup = self._notify_overdue_check.isChecked()
         settings.touch_gestures_enabled = self._touch_gestures_check.isChecked()
+        settings.show_gallery_plant_filters = self._gallery_plant_filters_check.isChecked()
+        settings.hide_plant_svg_icons = self._hide_plant_svg_icons.isChecked()
+        settings.plant_map_icons_fixed = self._plant_map_icons_fixed.isChecked()
+        settings.plant_map_icon_size = self._plant_map_icon_size.value()
         settings.agent_api_enabled = self._agent_api_check.isChecked()
         settings.agent_api_port = self._agent_api_port_spin.value()
         settings.agent_api_writes_enabled = self._agent_api_writes_check.isChecked()

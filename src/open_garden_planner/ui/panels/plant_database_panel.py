@@ -3,6 +3,7 @@
 import contextlib
 from collections.abc import Callable
 from copy import deepcopy
+from dataclasses import replace
 from datetime import date
 from typing import Any, cast
 
@@ -1016,10 +1017,13 @@ class PlantDatabasePanel(QWidget):
         if self._in_commit:
             return
         signature = self._species_form_signature()
-        if signature == getattr(self, "_committed_species_form", None):
+        previous_signature = getattr(self, "_committed_species_form", {})
+        if signature == previous_signature:
             return
 
-        # Update the PlantSpeciesData object
+        # The picker can hand the panel the library's own object. Keep canvas
+        # edits separate until the library has successfully saved them.
+        self._current_plant_data = replace(self._current_plant_data)
         self._current_plant_data.common_name = self.common_edit.text().strip() or ""
         self._current_plant_data.scientific_name = (
             self.scientific_edit.text().strip() or "Unknown"
@@ -1094,10 +1098,17 @@ class PlantDatabasePanel(QWidget):
             library = get_plant_library()
 
             if self._current_plant_data.data_source == "custom":
-                # Already a custom plant - update it in the library
                 plant_id = self._current_plant_data.source_id
-                if plant_id:
-                    library.update_plant(plant_id, self._current_plant_data)
+                library_plant = library.get_plant(plant_id) if plant_id else None
+                if library_plant is not None:
+                    # Placed plants are snapshots. A change to one field must
+                    # not replace newer library data, including its photo.
+                    updated = library_plant.to_dict()
+                    edited = self._current_plant_data.to_dict()
+                    for field, value in signature.items():
+                        if field not in previous_signature or value != previous_signature[field]:
+                            updated[field] = edited[field]
+                    library.update_plant(plant_id, PlantSpeciesData.from_dict(updated))
             else:
                 # API-sourced plant being modified - convert to custom
                 self._current_plant_data.data_source = "custom"
@@ -1167,28 +1178,41 @@ class PlantDatabasePanel(QWidget):
                         view.refresh_soil_mismatches()
             self._committed_species_form = signature
 
-    def _species_form_signature(self) -> tuple:
+    def _species_form_signature(self) -> dict[str, Any]:
         """Read only editable values, before library identity conversion."""
-        widgets = (
-            self.common_edit, self.scientific_edit, self.family_edit,
-            self.cycle_combo, self.flower_type_combo, self.pollination_combo,
-            self.sun_combo, self.water_combo, self.max_height_spin, self.max_spread_spin,
-            self.hardiness_min_spin, self.hardiness_max_spin, self.edible_checkbox,
-            self.edible_parts_edit, self.ph_min_spin, self.ph_max_spin,
-            self.n_demand_combo, self.p_demand_combo, self.k_demand_combo,
-            self.nutrient_demand_combo,
-        )
-        values: list[Any] = []
-        for widget in widgets:
+        widgets = {
+            "common_name": self.common_edit,
+            "scientific_name": self.scientific_edit,
+            "family": self.family_edit,
+            "cycle": self.cycle_combo,
+            "flower_type": self.flower_type_combo,
+            "pollination_type": self.pollination_combo,
+            "sun_requirement": self.sun_combo,
+            "water_needs": self.water_combo,
+            "max_height_cm": self.max_height_spin,
+            "max_spread_cm": self.max_spread_spin,
+            "hardiness_zone_min": self.hardiness_min_spin,
+            "hardiness_zone_max": self.hardiness_max_spin,
+            "edible": self.edible_checkbox,
+            "edible_parts": self.edible_parts_edit,
+            "ph_min": self.ph_min_spin,
+            "ph_max": self.ph_max_spin,
+            "n_demand": self.n_demand_combo,
+            "p_demand": self.p_demand_combo,
+            "k_demand": self.k_demand_combo,
+            "nutrient_demand": self.nutrient_demand_combo,
+        }
+        values: dict[str, Any] = {}
+        for field, widget in widgets.items():
             if isinstance(widget, QComboBox):
-                values.append(widget.currentData())
+                values[field] = widget.currentData()
             elif isinstance(widget, QDoubleSpinBox):
-                values.append(widget.value())
+                values[field] = widget.value()
             elif isinstance(widget, QCheckBox):
-                values.append(widget.isChecked())
+                values[field] = widget.isChecked()
             else:
-                values.append(widget.text())
-        return tuple(values)
+                values[field] = widget.text()
+        return values
 
     def _species_resize_radii(
         self,
@@ -2169,8 +2193,8 @@ class PlantDatabasePanel(QWidget):
 
         # Name
         name_parts = []
-        if plant_data.common_name:
-            name_parts.append(plant_data.common_name)
+        if plant_data.common_name or plant_data.home_name:
+            name_parts.append(plant_data.display_name)
         if plant_data.scientific_name:
             name_parts.append(f"({plant_data.scientific_name})")
         self._profile_name.setText(" ".join(name_parts) if name_parts else "—")
@@ -2418,7 +2442,7 @@ class PlantDatabasePanel(QWidget):
         # Show selection dialog
         from open_garden_planner.ui.dialogs.custom_plants_dialog import CustomPlantsDialog
 
-        dialog = CustomPlantsDialog(self)
+        dialog = CustomPlantsDialog(self, picker=True)
         dialog.setWindowTitle(self.tr("Select Custom Plant"))
         if dialog.exec() and dialog.selected_plant:
             # Assign selected plant to the item (undoable + repaints canvas)

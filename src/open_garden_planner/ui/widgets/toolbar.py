@@ -39,7 +39,7 @@ class MainToolbar(QToolBar):
 
     def _load_icon(self, icon_name: str) -> QIcon | None:
         """Load a themed icon from the central provider (ui/icons.py)."""
-        return get_icon(icon_name)
+        return get_icon(icon_name, color="#ffffff" if icon_name == "grid" else None)
 
     def _setup_toolbar(self) -> None:
         self.setObjectName("MainToolbar")  # required for QMainWindow.saveState
@@ -56,6 +56,9 @@ class MainToolbar(QToolBar):
             self.tr("Measure distances between two points"), "M",
         )
         self._add_tool_button(
+            ToolType.HAND, "hand", self.tr("Hand"), self.tr("Drag to pan the map"), "",
+        )
+        self._add_tool_button(
             ToolType.TEXT, "text_annotation", self.tr("Text"),
             self.tr("Place a text annotation"), "",
         )
@@ -69,6 +72,10 @@ class MainToolbar(QToolBar):
         )
 
         self._buttons[ToolType.SELECT].setChecked(True)
+        self._add_tool_button(
+            ToolType.PLANT_GRID, "grid", self.tr("Plant Grid"),
+            self.tr("Place a grid of plants"), "",
+        )
 
     def _add_tool_button(
         self,

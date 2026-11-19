@@ -15,6 +15,7 @@ class ToolType(Enum):
     """Enumeration of available tool types."""
 
     SELECT = auto()
+    HAND = auto()
     MEASURE = auto()
     CONSTRAINT = auto()  # Distance constraint
     CONSTRAINT_EDGE_LENGTH = auto()  # Edge-length constraint
@@ -56,6 +57,7 @@ class ToolType(Enum):
     TREE = auto()
     SHRUB = auto()
     PERENNIAL = auto()
+    PLANT_GRID = auto()
 
     # Hedge section (rectangle-based, SVG-rendered)
     HEDGE_SECTION = auto()

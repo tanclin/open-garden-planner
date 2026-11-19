@@ -521,8 +521,14 @@ class CanvasView(QGraphicsView):
 
     def _setup_tools(self) -> None:
         """Register and initialize drawing tools."""
+        from open_garden_planner.ui.canvas.hand_tool import HandTool
+        from open_garden_planner.ui.canvas.plant_grid_tool import PlantGridTool
+
         # Register basic tools
         self._tool_manager.register_tool(SelectTool(self))
+        self._tool_manager.register_tool(HandTool(self))
+        self._plant_grid_tool = PlantGridTool(self, self._canvas_scene)
+        self._tool_manager.register_tool(self._plant_grid_tool)
         self._tool_manager.register_tool(MeasureTool(self))
         self._tool_manager.register_tool(ConstraintTool(self))
         self._tool_manager.register_tool(EdgeLengthConstraintTool(self))
@@ -2876,6 +2882,12 @@ class CanvasView(QGraphicsView):
         # A release outside the viewport never reaches us; close that gesture.
         self._finish_pin_drag()
 
+        tool = self._tool_manager.active_tool
+        if tool is not None and tool.tool_type == ToolType.HAND:
+            if tool.mouse_press(event, self.mapToScene(event.position().toPoint())):
+                event.accept()
+                return
+
         # ── Guide line handling ─────────────────────────────────────────────
         if self._guides_visible and event.button() == Qt.MouseButton.LeftButton:
             vp_pos = event.position()
@@ -3544,6 +3556,10 @@ class CanvasView(QGraphicsView):
 
     def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
         """Handle mouse double click for tool operations and constraint editing."""
+        if (self._tool_manager.active_tool_type == ToolType.HAND
+                and event.button() == Qt.MouseButton.LeftButton):
+            event.accept()
+            return
         scene_pos = self.mapToScene(event.position().toPoint())
 
         # Double-click on a guide line → edit its position numerically
@@ -4387,6 +4403,9 @@ class CanvasView(QGraphicsView):
 
         # The scene's own foreground: the object labels, above the grid.
         super().drawForeground(painter, rect)
+        self._draw_plant_map_icons(painter, rect)
+        if self._tool_manager.active_tool is self._plant_grid_tool:
+            self._plant_grid_tool.paint_preview(painter)
 
         # Draw snap alignment guides
         if self._snap_guides:
@@ -4399,6 +4418,61 @@ class CanvasView(QGraphicsView):
         # Draw persistent guide lines
         if self._guides_visible and self._canvas_scene.guide_lines:
             self._draw_guide_lines(painter, rect)
+
+    def _draw_plant_map_icons(self, painter: QPainter, rect: QRectF) -> None:
+        """Paint plant badges in view pixels so fixed size is independent of zoom."""
+        from math import hypot
+
+        from open_garden_planner.app.settings import get_settings
+        from open_garden_planner.core.object_types import is_plant_type
+        from open_garden_planner.services import get_plant_library
+        from open_garden_planner.ui.canvas.items.circle_item import CircleItem
+        from open_garden_planner.ui.plant_map_art import paint_map_svg
+
+        settings = get_settings()
+        transform = painter.worldTransform()
+        zoom = hypot(transform.m11(), transform.m12())
+        if zoom <= 0:
+            return
+        size = settings.plant_map_icon_size
+        hide_svg = settings.hide_plant_svg_icons
+        if not settings.plant_map_icons_fixed:
+            size = min(1024, round(size * zoom))
+        if size < 2:
+            return
+        margin = size / zoom
+        painter.save()
+        painter.resetTransform()
+        font = QFont()
+        font.setPixelSize(size)
+        painter.setFont(font)
+        painter.setPen(self.palette().text().color())
+        library = None
+        for item in self._canvas_scene.items(rect.adjusted(-margin, -margin, margin, margin)):
+            if not isinstance(item, CircleItem) or not is_plant_type(item.object_type):
+                continue
+            record = item.metadata.get("plant_species", {})
+            if not isinstance(record, dict):
+                continue
+            plant = None
+            plant_id = record.get("source_id")
+            if record.get("data_source") == "custom" and isinstance(plant_id, str) and plant_id:
+                if library is None:
+                    library = get_plant_library()
+                plant = library.get_plant(plant_id)
+            enabled = plant.show_map_icon if plant is not None else record.get("show_map_icon") is True
+            if not enabled:
+                continue
+            svg = plant.map_svg if plant is not None else record.get("map_svg")
+            icon = plant.map_icon if plant is not None else record.get("map_icon")
+            center = transform.map(item.mapToScene(item.rect().center()))
+            box = QRectF(center.x() - size / 2, center.y() - size / 2, size, size)
+            if isinstance(svg, str) and svg and (hide_svg or paint_map_svg(painter, box, svg)):
+                continue
+            if isinstance(icon, str) and icon.strip():
+                painter.drawText(box.adjusted(-size / 2, 0, size / 2, 0),
+                                 Qt.AlignmentFlag.AlignCenter, icon[:16])
+        painter.restore()
 
     def _draw_canvas_border(self, painter: QPainter) -> None:
         """Draw a border around the canvas area."""

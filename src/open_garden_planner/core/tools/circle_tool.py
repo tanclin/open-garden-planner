@@ -52,6 +52,7 @@ class CircleTool(BaseTool):
         self._is_drawing = False
         self._plant_category: object | None = None
         self._plant_species: str = ""
+        self._species_record: dict | None = None
 
     def activate(self) -> None:
         """Called when this tool becomes the active tool.
@@ -62,9 +63,10 @@ class CircleTool(BaseTool):
         super().activate()
         self._plant_category = None
         self._plant_species = ""
+        self._species_record = None
 
     def set_plant_info(
-        self, category: object | None = None, species: str = ""
+        self, category: object | None = None, species: str = "", species_record: dict | None = None,
     ) -> None:
         """Set plant category/species for the next item created.
 
@@ -74,6 +76,7 @@ class CircleTool(BaseTool):
         """
         self._plant_category = category
         self._plant_species = species
+        self._species_record = species_record
 
     def mouse_press(self, event: QMouseEvent, scene_pos: QPointF) -> bool:
         """Handle click for center or rim point."""
@@ -173,6 +176,7 @@ class CircleTool(BaseTool):
                 item = build_plant(
                     scene, self._center_point, self._object_type, radius,
                     species_name=self._plant_species, plant_category=cast("PlantCategory | None", self._plant_category),
+                    species_dict=self._species_record,
                     auto_assign=bool(manager and manager.auto_assign_permaculture_layers),
                 )
             else:

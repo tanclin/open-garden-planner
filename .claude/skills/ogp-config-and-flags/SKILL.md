@@ -73,6 +73,7 @@ All rows **production** unless noted.
 | `appearance/show_labels` | `show_labels` | bool | `True` | canvas / View menu |
 | `appearance/show_constraints` | `show_constraints` | bool | `True` | canvas / View menu |
 | `appearance/show_spacing_circles` | `show_spacing_circles` | bool | `True` | `canvas_view.py`, spacing-ring paint gate |
+| `appearance/show_gallery_plant_filters` | `show_gallery_plant_filters` | bool | `False` | Plant gallery popups, read on open |
 
 > **TRAP (§11.4, verified in `docs/11-risks-and-technical-debt/README.md`):
 > `ThemeColors.get_colors(ThemeMode.SYSTEM)` asks the operating system, not the

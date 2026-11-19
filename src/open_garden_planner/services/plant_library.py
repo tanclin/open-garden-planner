@@ -1,7 +1,11 @@
 """Custom plant library for storing user-defined plant species."""
 
+import contextlib
 import json
+import os
+import tempfile
 import uuid
+from pathlib import Path
 from typing import Any
 
 from open_garden_planner.models.plant_data import PlantSpeciesData
@@ -44,7 +48,7 @@ class PlantLibrary:
             # If file is corrupted, start with empty library
             self._plants = {}
 
-    def _save(self) -> None:
+    def _save(self) -> bool:
         """Save custom plants to the library file."""
         data = {
             "version": "1.0",
@@ -53,12 +57,21 @@ class PlantLibrary:
             },
         }
 
+        temporary: Path | None = None
         try:
-            with open(self._library_path, "w", encoding="utf-8") as f:
-                json.dump(data, f, indent=2)
+            with tempfile.NamedTemporaryFile(
+                mode="w", encoding="utf-8", dir=self._library_path.parent,
+                suffix=".tmp", delete=False,
+            ) as stream:
+                temporary = Path(stream.name)
+                json.dump(data, stream, indent=2)
+            os.replace(temporary, self._library_path)
         except OSError:
-            # Silently fail if we can't write
-            pass
+            if temporary is not None:
+                with contextlib.suppress(OSError):
+                    temporary.unlink(missing_ok=True)
+            return False
+        return True
 
     def add_plant(self, plant: PlantSpeciesData) -> str:
         """Add a custom plant to the library.
@@ -87,16 +100,19 @@ class PlantLibrary:
             plant: The updated plant data
 
         Returns:
-            True if the plant was found and updated, False otherwise
+            True if the plant was found and saved, False otherwise
         """
-        if plant_id not in self._plants:
+        previous = self._plants.get(plant_id)
+        if previous is None:
             return False
 
         plant.data_source = "custom"
         plant.source_id = plant_id
         self._plants[plant_id] = plant
-        self._save()
-        return True
+        if self._save():
+            return True
+        self._plants[plant_id] = previous
+        return False
 
     def remove_plant(self, plant_id: str) -> bool:
         """Remove a plant from the library.
@@ -149,6 +165,7 @@ class PlantLibrary:
             if (
                 query_lower in plant.scientific_name.lower()
                 or query_lower in plant.common_name.lower()
+                or query_lower in plant.home_name.lower()
                 or query_lower in plant.family.lower()
             ):
                 results.append(plant)

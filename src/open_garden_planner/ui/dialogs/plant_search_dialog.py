@@ -298,7 +298,7 @@ class PlantSearchDialog(QDialog):
     def _format_result_text(self, plant_data: PlantSpeciesData) -> str:
         """Format a search result list entry label."""
         return self.tr("{name} ({scientific}) — {source}").format(
-            name=plant_data.common_name,
+            name=plant_data.display_name if plant_data.home_name else plant_data.common_name,
             scientific=plant_data.scientific_name,
             source=plant_source_label(plant_data.data_source),
         )
@@ -372,7 +372,7 @@ class PlantSearchDialog(QDialog):
         html = "<html><body style='font-family: sans-serif;'>"
 
         # Title
-        html += f"<h2>{plant.common_name}</h2>"
+        html += f"<h2>{escape(plant.display_name)}</h2>"
         html += f"<p><i>{plant.scientific_name}</i></p>"
 
         if plant.description:

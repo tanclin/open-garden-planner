@@ -216,7 +216,10 @@ Pre-defined object types for common property elements:
 ### FR-5.3 Plant Database Integration
 - **FR-PLANT-10**: Connect to Trefle.io API for plant species lookup (primary)
 - **FR-PLANT-11**: Offline mode: cache previously fetched plant data locally (SQLite)
-- **FR-PLANT-12**: User can create custom plant species entries (stored in local library)
+- **FR-PLANT-12**: User can create and edit custom plant species entries in the local library. Manage Custom Plants opens a separate editor for the selected species. Photos can be replaced from a local image or removed, and imported photos are stored with the species record.
+  The editor supports a household name, type for new placements, a Wikipedia search, and a map icon (embedded SVG or symbol). Each custom plant controls its own icon visibility, off by default. Preferences → Canvas controls icon size and whether it follows zoom.
+  The household name is displayed in plant UI but is not printed as a label on the plan. Plant gallery folders show only custom species whose kind matches the gallery.
+- **FR-PLANT-26**: The Plant Grid tool remembers rows and columns and uses the first two plan clicks to set the bounds. Drag the preview to move it, the blue handles to resize it and the green handle to rotate it. Drag the orange handle or use the plant-size slider to change the diameter of all plants. Confirm inserts all plants in one undoable step.
 - **FR-PLANT-13**: Search plants by common name, scientific name, or characteristics
 - **FR-PLANT-14**: Species search first queries the complete bundled/custom offline catalog, then applies the text and trait filters before the display limit. Empty or filter-only browsing stays offline. A nonempty query with zero filtered offline matches automatically invokes the configured online fallback chain; **Search online** invokes it explicitly even when local matches exist. Online requests and selected-result enrichment run away from the GUI thread, with obsolete query/selection/closed-dialog responses discarded.
 
@@ -314,6 +317,7 @@ Pre-defined object types for common property elements:
 - **FR-UI-08**: Welcome screen with recent files
 - **FR-UI-09**: Remember window size, position, panel states between sessions
 - **FR-UI-10**: The category toolbar opens visual thumbnail galleries for browsing and placing objects and plants.
+  Plant gallery popups hide layer and function filters by default. Preferences → Canvas → Show plant gallery filters enables them when a popup is next opened. Text filtering is always available.
 - **FR-UI-11**: Fullscreen preview mode (F11) hiding all UI overlays
 - **FR-UI-12**: Toggleable object labels on canvas
 - **FR-UI-13** *(issue #304)*: Across the main toolbar and the constraint toolbar **exactly one tool button is highlighted at any time — the active tool's**. The two toolbars own separate exclusive `QButtonGroup`s, so the app reconciles them itself: `ToolManager` emits `tool_type_changed(ToolType)` alongside the display-name `tool_changed(str)`; `GardenPlannerApp` forwards it to both toolbars' `set_active_tool()`, each of which unchecks its own group when the active tool is not one of its buttons. (Before this, the sync was a hard-coded map from tool *display name* to `ToolType` that knew only three of the ~15 constraint tools — every other tool, e.g. **Equal Size**, never reached the toolbars at all, so **Select** stayed highlighted too and the user could only reach objects via right-click; keying on display names — several of which are translated at import — was a second fragility the type-keyed signal removes.) Pinned by `tests/integration/test_toolbar_highlight_sync.py` (which drives every constraint-toolbar tool plus the main-toolbar tools through the real window).

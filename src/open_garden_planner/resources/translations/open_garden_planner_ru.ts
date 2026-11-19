@@ -1301,6 +1301,10 @@
     <context>
         <name>CategoryDropdown</name>
         <message>
+            <source>Custom Plants</source>
+            <translation>Пользовательские растения</translation>
+        </message>
+        <message>
             <location filename="../../ui/widgets/category_dropdown.py" line="193" />
             <source>Add to Favorites</source>
             <translation>Добавить в избранное</translation>
@@ -3374,11 +3378,19 @@ Use the Constraint tool (K) to add one.</source>
     <context>
         <name>CustomPlantsDialog</name>
         <message>
+            <source>Duplicate</source>
+            <translation>Дублировать</translation>
+        </message>
+        <message>
+            <source>No custom plants of this kind.</source>
+            <translation>Пользовательских растений этого типа нет.</translation>
+        </message>
+        <message>
             <source>Annual</source>
             <translation type="vanished">Однолетнее</translation>
         </message>
         <message>
-            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="216" />
+            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="237" />
             <source>Are you sure you want to delete '{name}'?
 
 This will remove it from your custom library. Plants already placed in projects will keep their data.</source>
@@ -3395,72 +3407,76 @@ This will remove it from your custom library. Plants already placed in projects 
             <translation type="vanished">Закрыть</translation>
         </message>
         <message>
-            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="71" />
+            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="72" />
             <source>Common Name</source>
             <translation>Народное название</translation>
         </message>
         <message>
-            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="99" />
+            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="100" />
             <source>Create New</source>
             <translation>Создать новое</translation>
         </message>
         <message>
-            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="100" />
+            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="101" />
             <source>Create a new custom plant species</source>
             <translation>Создать новый вид пользовательского растения</translation>
         </message>
         <message>
-            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="54" />
+            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="55" />
             <source>Custom Plant Library</source>
             <translation>Библиотека пользовательских растений</translation>
         </message>
         <message>
-            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="71" />
+            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="72" />
             <source>Cycle</source>
             <translation>Тип жизненного цикла</translation>
         </message>
         <message>
-            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="107" />
+            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="113" />
             <source>Delete</source>
             <translation>Удалить</translation>
         </message>
         <message>
-            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="215" />
+            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="236" />
             <source>Delete Plant</source>
             <translation>Удаление растения</translation>
         </message>
         <message>
-            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="108" />
+            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="114" />
             <source>Delete the selected plant</source>
             <translation>Удалить выбранное растение</translation>
         </message>
         <message>
-            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="71" />
+            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="105" />
+            <source>Edit</source>
+            <translation>Редактировать</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="72" />
             <source>Family</source>
             <translation>Семейство</translation>
         </message>
         <message>
-            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="37" />
+            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="38" />
             <source>Manage Custom Plants</source>
             <translation>Управление пользовательскими растениями</translation>
         </message>
         <message>
-            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="189" />
+            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="196" />
             <source>New Plant</source>
             <translation>Новое растение</translation>
         </message>
         <message>
-            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="188" />
+            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="195" />
             <source>New Species</source>
             <translation>Новый вид</translation>
         </message>
         <message>
-            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="205" />
             <source>New plant created. Edit it in the Plant Details panel.</source>
-            <translation>Новое растение создано. Отредактируйте его на панели «Сведения о растении».</translation>
+            <translation type="vanished">Новое растение создано. Отредактируйте его на панели «Сведения о растении».</translation>
         </message>
         <message>
-            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="166" />
+            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="172" />
             <source>No custom plants yet. Click 'Create New' to add one.</source>
             <translation>Пользовательских растений пока нет. Нажмите «Создать новое», чтобы добавить.</translation>
         </message>
@@ -3469,17 +3485,17 @@ This will remove it from your custom library. Plants already placed in projects 
             <translation type="vanished">Многолетнее</translation>
         </message>
         <message>
-            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="60" />
+            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="61" />
             <source>Plants you've created or customized are stored here. These are available across all your projects.</source>
             <translation>Здесь хранятся созданные или настроенные вами растения. Они доступны во всех ваших проектах.</translation>
         </message>
         <message>
-            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="71" />
+            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="72" />
             <source>Scientific Name</source>
             <translation>Научное название</translation>
         </message>
         <message>
-            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="168" />
+            <location filename="../../ui/dialogs/custom_plants_dialog.py" line="174" />
             <source>{count} custom plant(s) in library</source>
             <translation>{count} пользовательское(их) растение(я) в библиотеке</translation>
         </message>
@@ -3846,6 +3862,529 @@ Use 0.1 for DXF in mm, 100 for DXF in metres.</source>
             <location filename="../../ui/edible_parts.py" line="16" />
             <source>Tubers</source>
             <translation>Клубни</translation>
+        </message>
+    </context>
+    <context>
+        <name>EditCustomPlantDialog</name>
+        <message>
+            <source>Show icon on the map</source>
+            <translation>Показывать значок на плане</translation>
+        </message>
+        <message>
+            <source>Vegetable or herb</source>
+            <translation>Овощное или пряное растение</translation>
+        </message>
+        <message>
+            <source>Home Name</source>
+            <translation>Домашнее название</translation>
+        </message>
+        <message>
+            <source>Find on Wiki</source>
+            <translation>Найти в Википедии</translation>
+        </message>
+        <message>
+            <source>Kind</source>
+            <translation>Тип растения</translation>
+        </message>
+        <message>
+            <source>Tree</source>
+            <translation>Дерево</translation>
+        </message>
+        <message>
+            <source>Shrub</source>
+            <translation>Кустарник</translation>
+        </message>
+        <message>
+            <source>Perennial</source>
+            <translation>Многолетник</translation>
+        </message>
+        <message>
+            <source>Map icon (emoji or symbol)</source>
+            <translation>Значок на плане (эмодзи или символ)</translation>
+        </message>
+        <message>
+            <source>Map SVG</source>
+            <translation>SVG для плана</translation>
+        </message>
+        <message>
+            <source>Choose SVG…</source>
+            <translation>Выбрать SVG…</translation>
+        </message>
+        <message>
+            <source>Remove SVG</source>
+            <translation>Удалить SVG</translation>
+        </message>
+        <message>
+            <source>Could not read this SVG.</source>
+            <translation>Не удалось прочитать этот SVG.</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="144" />
+            <source>Allowed range: {minimum} to {maximum}</source>
+            <translation>Допустимый диапазон: от {minimum} до {maximum}</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="352" />
+            <source>(no photo)</source>
+            <translation>(фото нет)</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="173" />
+            <source>Choose Photo…</source>
+            <translation>Выбрать фото…</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="158" />
+            <source>Common Name</source>
+            <translation>Народное название</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="331" />
+            <source>Could not read this photo.</source>
+            <translation>Не удалось прочитать это фото.</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="381" />
+            <source>Could not save changes to the plant library.</source>
+            <translation>Не удалось сохранить изменения в библиотеке растений.</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="188" />
+            <source>Cycle</source>
+            <translation>Тип жизненного цикла</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="165" />
+            <source>Description</source>
+            <translation>Описание</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="240" />
+            <source>Dioecious Female (♀ only)</source>
+            <translation>Двудомное, женское (только ♀)</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="239" />
+            <source>Dioecious Male (♂ only)</source>
+            <translation>Двудомное, мужское (только ♂)</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="301" />
+            <source>Direct Sowing End</source>
+            <translation>Конец прямого посева</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="300" />
+            <source>Direct Sowing Start</source>
+            <translation>Начало прямого посева</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="220" />
+            <source>Edible</source>
+            <translation>Съедобное</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="227" />
+            <source>Edible Parts</source>
+            <translation>Съедобные части</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="65" />
+            <source>Edit Custom Plant</source>
+            <translation>Изменить пользовательское растение</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="375" />
+            <source>Enter a common or scientific name.</source>
+            <translation>Введите обычное или научное название.</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="368" />
+            <source>Enter a valid number for {field}.</source>
+            <translation>Введите допустимое число для поля «{field}».</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="291" />
+            <source>Enter calendar offsets in weeks from the last spring frost. Use negative numbers for dates before frost.</source>
+            <translation>Укажите сроки в неделях относительно последнего весеннего заморозка. Для дат до заморозка используйте отрицательные числа.</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="160" />
+            <source>Family</source>
+            <translation>Семейство</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="195" />
+            <source>Fast</source>
+            <translation>Быстро</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="277" />
+            <source>Fixer (legume)</source>
+            <translation>Азотофиксатор (бобовое)</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="231" />
+            <source>Flower Color</source>
+            <translation>Цвет цветков</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="235" />
+            <source>Flower Type</source>
+            <translation>Тип цветков</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="220" />
+            <source>Flowering</source>
+            <translation>Цветущее</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="232" />
+            <source>Foliage Color</source>
+            <translation>Цвет листвы</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="233" />
+            <source>Foliage Texture</source>
+            <translation>Текстура листвы</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="197" />
+            <source>Food-forest layer</source>
+            <translation>Ярус лесосада</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="269" />
+            <source>Frost Tolerance</source>
+            <translation>Морозостойкость</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="258" />
+            <source>Full Shade</source>
+            <translation>Полная тень</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="255" />
+            <source>Full Sun</source>
+            <translation>Полное солнце</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="161" />
+            <source>Genus</source>
+            <translation>Род</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="251" />
+            <source>Growing Conditions</source>
+            <translation>Условия выращивания</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="191" />
+            <source>Growth Rate</source>
+            <translation>Скорость роста</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="186" />
+            <source>Growth and Traits</source>
+            <translation>Рост и признаки</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="271" />
+            <source>Half-hardy</source>
+            <translation>Умеренно морозостойкое</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="313" />
+            <source>Hardening Off (days)</source>
+            <translation>Закаливание (дни)</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="270" />
+            <source>Hardy</source>
+            <translation>Морозостойкое</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="305" />
+            <source>Harvest End</source>
+            <translation>Конец сбора урожая</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="304" />
+            <source>Harvest Start</source>
+            <translation>Начало сбора урожая</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="280" />
+            <source>Heavy feeder</source>
+            <translation>Требует много питания</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="237" />
+            <source>Hermaphrodite (perfect flowers)</source>
+            <translation>Обоеполое (идеальные цветки)</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="260" />
+            <source>High</source>
+            <translation>Серьёзная угроза</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="156" />
+            <source>Identity and Photo</source>
+            <translation>Названия и фото</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="323" />
+            <source>Images (*.png *.jpg *.jpeg *.gif *.webp)</source>
+            <translation>Изображения (*.png *.jpg *.jpeg *.gif *.webp)</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="299" />
+            <source>Indoor Sowing End</source>
+            <translation>Конец посева в помещении</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="298" />
+            <source>Indoor Sowing Start</source>
+            <translation>Начало посева в помещении</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="287" />
+            <source>K demand</source>
+            <translation>Потребность в K</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="279" />
+            <source>Light feeder</source>
+            <translation>Не требует много питания</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="260" />
+            <source>Low</source>
+            <translation>Слабая угроза</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="309" />
+            <source>Max Days to Germination</source>
+            <translation>Макс. дней до прорастания</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="311" />
+            <source>Max Days to Maturity</source>
+            <translation>Макс. дней до созревания</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="267" />
+            <source>Max Hardiness Zone</source>
+            <translation>Макс. зона морозостойкости</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="216" />
+            <source>Max Height (cm)</source>
+            <translation>Макс. высота (см)</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="218" />
+            <source>Max Spread (cm)</source>
+            <translation>Макс. ширина (см)</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="275" />
+            <source>Max pH</source>
+            <translation>Макс. pH</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="194" />
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="260" />
+            <source>Medium</source>
+            <translation>Средняя угроза</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="280" />
+            <source>Medium feeder</source>
+            <translation>Умеренно потребляет питание</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="308" />
+            <source>Min Days to Germination</source>
+            <translation>Мин. дней до прорастания</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="310" />
+            <source>Min Days to Maturity</source>
+            <translation>Мин. дней до созревания</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="316" />
+            <source>Min Germination Temperature (°C)</source>
+            <translation>Мин. температура прорастания (°C)</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="266" />
+            <source>Min Hardiness Zone</source>
+            <translation>Мин. зона морозостойкости</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="215" />
+            <source>Min Height (cm)</source>
+            <translation>Мин. высота (см)</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="217" />
+            <source>Min Spread (cm)</source>
+            <translation>Мин. ширина (см)</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="275" />
+            <source>Min pH</source>
+            <translation>Мин. pH</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="238" />
+            <source>Monoecious (separate ♂/♀ flowers)</source>
+            <translation>Однодомное (отдельные ♂/♀ цветки)</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="285" />
+            <source>N demand</source>
+            <translation>Потребность в N</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="352" />
+            <source>No preview available</source>
+            <translation>Предпросмотр недоступен</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="226" />
+            <source>One edible part per line</source>
+            <translation>По одной съедобной части на строку</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="278" />
+            <source>Overall demand</source>
+            <translation>Общая потребность</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="286" />
+            <source>P demand</source>
+            <translation>Потребность в P</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="257" />
+            <source>Partial Shade</source>
+            <translation>Полутень</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="256" />
+            <source>Partial Sun</source>
+            <translation>Полусолнце</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="245" />
+            <source>Partially self-fertile</source>
+            <translation>Частично самоплодное</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="171" />
+            <source>Photo</source>
+            <translation>Фото</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="290" />
+            <source>Planting Calendar</source>
+            <translation>Календарь посадок</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="242" />
+            <source>Pollination</source>
+            <translation>Опыление</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="312" />
+            <source>Prick Out After (days)</source>
+            <translation>Пикировка через (дни)</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="209" />
+            <source>Recorded functions</source>
+            <translation>Указанные функции</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="177" />
+            <source>Remove Photo</source>
+            <translation>Удалить фото</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="159" />
+            <source>Scientific Name</source>
+            <translation>Научное название</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="317" />
+            <source>Seed Depth (cm)</source>
+            <translation>Глубина посева (см)</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="322" />
+            <source>Select photo</source>
+            <translation>Выбрать фото</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="244" />
+            <source>Self-fertile (no partner needed)</source>
+            <translation>Самоплодное (партнёр не требуется)</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="246" />
+            <source>Self-sterile (needs partner)</source>
+            <translation>Самобесплодное (требуется партнёр)</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="193" />
+            <source>Slow</source>
+            <translation>Медленно</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="273" />
+            <source>Soil Type</source>
+            <translation>Тип почвы</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="253" />
+            <source>Sun</source>
+            <translation>Солнце</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="271" />
+            <source>Tender</source>
+            <translation>Чувствительное к заморозкам</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="303" />
+            <source>Transplant End</source>
+            <translation>Конец высадки</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="302" />
+            <source>Transplant Start</source>
+            <translation>Начало высадки</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="247" />
+            <source>Triploid (sterile pollen)</source>
+            <translation>Триплоидное (пыльца не даёт семян)</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="138" />
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="187" />
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="252" />
+            <source>Unspecified</source>
+            <translation>Без признака</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="261" />
+            <source>Water</source>
+            <translation>Вода</translation>
         </message>
     </context>
     <context>
@@ -8640,6 +9179,22 @@ Look up your zone for any country at:
     <context>
         <name>MainToolbar</name>
         <message>
+            <source>Hand</source>
+            <translation>Рука</translation>
+        </message>
+        <message>
+            <source>Drag to pan the map</source>
+            <translation>Перетащите, чтобы переместить план</translation>
+        </message>
+        <message>
+            <source>Plant Grid</source>
+            <translation>Сетка растений</translation>
+        </message>
+        <message>
+            <source>Place a grid of plants</source>
+            <translation>Разместить сетку растений</translation>
+        </message>
+        <message>
             <location filename="../../ui/widgets/toolbar.py" line="63" />
             <source>Callout</source>
             <translation>Выноска</translation>
@@ -11590,6 +12145,23 @@ to assign species data.</source>
     </context>
     <context>
         <name>PreferencesDialog</name>
+        <message>
+            <source>Hide custom plant SVG icons</source>
+            <translation>Скрыть пользовательские SVG-значки растений</translation>
+        </message>
+        <message>
+            <source>Keep plant icons the same size when zooming</source>
+            <translation>Сохранять размер значков растений при масштабировании</translation>
+        </message>
+        <message>
+            <source>Plant icon size</source>
+            <translation>Размер значка растения</translation>
+        </message>
+        <message>
+            <location filename="../../ui/dialogs/preferences_dialog.py" line="277" />
+            <source>Show plant gallery filters</source>
+            <translation>Показывать фильтры в галерее растений</translation>
+        </message>
         <message>
             <location filename="../../ui/dialogs/preferences_dialog.py" line="368" />
             <source>3D View</source>
@@ -17523,6 +18095,60 @@ The file must be owned by your account with owner-only read and write access. Co
             <location filename="../../main.py" line="432" />
             <source>Unexpected Error</source>
             <translation>Непредвиденная ошибка</translation>
+        </message>
+    </context>
+    <context>
+        <name>PlantGridTool</name>
+        <message>
+            <source>Preview selected plant</source>
+            <translation>Предпросмотр выбранного растения</translation>
+        </message>
+        <message>
+            <source>Add all plants from this grid to one group?</source>
+            <translation>Добавить все растения этой сетки в одну группу?</translation>
+        </message>
+        <message>
+            <source>Plant size slider</source>
+            <translation>Ползунок размера растений</translation>
+        </message>
+        <message>
+            <source>Plant Grid</source>
+            <translation>Сетка растений</translation>
+        </message>
+        <message>
+            <source>Rows</source>
+            <translation>Ряды</translation>
+        </message>
+        <message>
+            <source>Columns</source>
+            <translation>Столбцы</translation>
+        </message>
+        <message>
+            <source>Cancel grid</source>
+            <translation>Отменить сетку</translation>
+        </message>
+        <message>
+            <source>Edit rows and columns</source>
+            <translation>Изменить ряды и столбцы</translation>
+        </message>
+        <message>
+            <source>Change plant</source>
+            <translation>Заменить растение</translation>
+        </message>
+        <message>
+            <source>Place plants</source>
+            <translation>Разместить растения</translation>
+        </message>
+        <message>
+            <source>plants</source>
+            <translation>растений</translation>
+        </message>
+    </context>
+    <context>
+        <name>HandTool</name>
+        <message>
+            <source>Hand</source>
+            <translation>Рука</translation>
         </message>
     </context>
 </TS>

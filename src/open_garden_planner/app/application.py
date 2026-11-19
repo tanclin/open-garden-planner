@@ -5323,7 +5323,9 @@ class GardenPlannerApp(QMainWindow):
         if isinstance(active_tool, CircleTool):
             category = getattr(item, "plant_category", None)
             species = getattr(item, "species", "")
-            active_tool.set_plant_info(category=category, species=species)
+            active_tool.set_plant_info(
+                category=category, species=species, species_record=getattr(item, "species_record", None),
+            )
 
     def _sync_toolbar_state_by_type(self, tool_type: ToolType) -> None:
         """Sync toolbar button states when the active tool changes.
@@ -5588,6 +5590,7 @@ class GardenPlannerApp(QMainWindow):
 
         dialog = CustomPlantsDialog(self)
         dialog.exec()
+        self.canvas_view.viewport().update()
 
     def _on_check_companion_planting(self) -> None:
         """Run whole-plan companion planting analysis and show report."""
@@ -5681,6 +5684,7 @@ class GardenPlannerApp(QMainWindow):
             self._workspace.apply_look_settings()  # 3D quality, reduced motion (L1.4), sky (L7)
             # Canvas (#321): touch gestures take effect at once, like the look settings.
             self.canvas_view.set_touch_gestures_enabled(settings.touch_gestures_enabled)
+            self.canvas_view.viewport().update()
             after = _agent_api_state()
             if before != after:
                 # Restart so a toggle, port, writes or token change takes effect.

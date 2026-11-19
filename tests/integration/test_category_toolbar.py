@@ -11,9 +11,11 @@ import pytest
 from PyQt6.QtCore import QPoint, QRect, Qt
 from PyQt6.QtWidgets import QApplication
 
+from open_garden_planner.app.settings import AppSettings, get_settings
 from open_garden_planner.core.i18n import load_translator
 from open_garden_planner.core.tools import ToolType
 from open_garden_planner.services.bundled_species_db import lookup_species
+from open_garden_planner.ui.dialogs.preferences_dialog import PreferencesDialog
 from open_garden_planner.ui.theme import ThemeMode, generate_stylesheet
 from open_garden_planner.ui.widgets.category_dropdown import CategoryDropdown
 from open_garden_planner.ui.widgets.category_toolbar import CategoryToolbar
@@ -135,6 +137,7 @@ class TestCategoryDropdownFlow:
     def test_vegetable_popup_stays_on_screen_and_places_filtered_item(
         self, qtbot, themed_gallery, monkeypatch, dimensions
     ) -> None:
+        get_settings().show_gallery_plant_filters = True
         tb = CategoryToolbar()
         qtbot.addWidget(tb)
         tb.show()
@@ -176,6 +179,45 @@ class TestCategoryDropdownFlow:
             qtbot.mouseClick(carrot, Qt.MouseButton.LeftButton)
         assert signal.args[0].species == carrot.item.species
         assert not dropdown.isVisible()
+
+
+    def test_preferences_toggle_gallery_filters_on_next_open(self, qtbot) -> None:
+        toolbar = CategoryToolbar()
+        qtbot.addWidget(toolbar)
+        trees, anchor = next(
+            (dropdown, button)
+            for dropdown, button in zip(
+                toolbar._category_dropdowns, toolbar._category_buttons, strict=True,
+            )
+            if dropdown._category.name == "Trees"
+        )
+        apple = next(button for button in trees._buttons if button.item.name == "Apple Tree")
+        assert trees._trait_scroll.isHidden()
+
+        preferences = PreferencesDialog()
+        qtbot.addWidget(preferences)
+        assert not preferences._gallery_plant_filters_check.isChecked()
+        preferences._gallery_plant_filters_check.setChecked(True)
+        preferences._save_and_accept()
+        assert AppSettings().show_gallery_plant_filters
+        trees.show_below(anchor)
+        assert not trees._trait_scroll.isHidden()
+        trees.trait_filters.function_buttons["nitrogen_fixer"].setChecked(True)
+        assert apple.isHidden()
+        trees.close()
+
+        preferences = PreferencesDialog()
+        qtbot.addWidget(preferences)
+        assert preferences._gallery_plant_filters_check.isChecked()
+        preferences._gallery_plant_filters_check.setChecked(False)
+        preferences._save_and_accept()
+        assert not AppSettings().show_gallery_plant_filters
+        trees.show_below(anchor)
+        assert trees._trait_scroll.isHidden()
+        assert not apple.isHidden()
+        trees._search_box.setText("oak")
+        assert apple.isHidden()
+        trees.close()
 
 
 class TestGlobalSearch:

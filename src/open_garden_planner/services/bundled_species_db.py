@@ -172,14 +172,18 @@ def merge_calendar_data(
 ) -> dict[str, Any]:
     """Merge calendar fields into a plant dict.
 
-    Priority: bundled DB > existing plant_dict value > api_dict.
+    Authored custom values take priority. Otherwise use the bundled DB,
+    existing values and the API in that order.
     """
     scientific_name = plant_dict.get("scientific_name", "")
     local_entry = get_species_entry(scientific_name) if scientific_name else None
 
     result = dict(plant_dict)
+    custom = plant_dict.get("data_source") == "custom"
 
     for field in _CALENDAR_FIELDS:
+        if custom and result.get(field) not in (None, ""):
+            continue
         if local_entry is not None and local_entry.get(field) is not None:
             result[field] = local_entry[field]
         elif result.get(field) is not None:

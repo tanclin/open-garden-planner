@@ -7,6 +7,13 @@ from enum import Enum
 from typing import Any
 
 
+def plant_display_name(record: dict[str, Any]) -> str:
+    """Combine the usual and household names without changing lookup names."""
+    name = record.get("common_name") or record.get("scientific_name") or ""
+    home = record.get("home_name") or ""
+    return f"{name} ({home})" if name and home else name or home
+
+
 class PermacultureLayer(Enum):
     """Recorded food-forest niche, independent of artwork and canvas layers."""
 
@@ -206,6 +213,19 @@ class PlantSpeciesData:
 
     # Extensible metadata for API-specific fields
     raw_data: dict[str, Any] = field(default_factory=dict)
+    home_name: str = ""
+    plant_kind: str = ""
+    map_svg: str = ""
+    map_icon: str = ""
+    show_map_icon: bool = False
+
+    @property
+    def display_name(self) -> str:
+        return plant_display_name({
+            "common_name": self.common_name,
+            "scientific_name": self.scientific_name,
+            "home_name": self.home_name,
+        })
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization.
@@ -269,6 +289,11 @@ class PlantSpeciesData:
             "p_demand": self.p_demand,
             "k_demand": self.k_demand,
             "raw_data": self.raw_data,
+            "home_name": self.home_name,
+            "plant_kind": self.plant_kind,
+            "map_svg": self.map_svg,
+            "map_icon": self.map_icon,
+            "show_map_icon": self.show_map_icon,
         }
 
     @classmethod
@@ -309,6 +334,11 @@ class PlantSpeciesData:
             scientific_name=data["scientific_name"],
             common_name=data["common_name"],
             family=data.get("family", ""),
+            home_name=data.get("home_name") or "",
+            plant_kind=data.get("plant_kind") or "",
+            map_svg=data.get("map_svg") or "",
+            map_icon=data.get("map_icon") or "",
+            show_map_icon=data.get("show_map_icon") is True,
             genus=data.get("genus", ""),
             cycle=cycle,
             growth_rate=growth_rate,

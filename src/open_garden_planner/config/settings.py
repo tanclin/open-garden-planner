@@ -213,6 +213,15 @@ class AppSettings:
     KEY_DYNAMIC_INPUT = "canvas/dynamic_input_enabled"
     # Touch gestures (#321): pinch-to-zoom and two-finger pan on the canvas.
     KEY_TOUCH_GESTURES = "canvas/touch_gestures_enabled"
+    KEY_GALLERY_PLANT_FILTERS = "appearance/show_gallery_plant_filters"
+    KEY_PLANT_MAP_ICONS_FIXED = "appearance/plant_map_icons_fixed"
+    KEY_HIDE_PLANT_SVG_ICONS = "appearance/hide_plant_svg_icons"
+    KEY_PLANT_MAP_ICON_SIZE = "appearance/plant_map_icon_size"
+    PLANT_MAP_ICON_SIZE_MIN = 12
+    PLANT_MAP_ICON_SIZE_MAX = 96
+    KEY_PLANT_GRID_ROWS = "tools/plant_grid_rows"
+    KEY_PLANT_GRID_COLUMNS = "tools/plant_grid_columns"
+    PLANT_GRID_MAX_SIDE = 20
     KEY_LANGUAGE = "appearance/language"
     KEY_SHOW_SPACING_CIRCLES = "appearance/show_spacing_circles"
     KEY_SKIPPED_VERSION = "updates/skipped_version"
@@ -283,6 +292,7 @@ class AppSettings:
     # Touch gestures (#321): pinch and two-finger pan are additive; a mouse-only
     # user sees no difference, so they ship on.
     DEFAULT_TOUCH_GESTURES = True
+    DEFAULT_GALLERY_PLANT_FILTERS = False
     DEFAULT_LANGUAGE = "en"
     DEFAULT_AUTOSAVE_INTERVAL_MINUTES = 5
     MIN_AUTOSAVE_INTERVAL_MINUTES = 1
@@ -629,6 +639,57 @@ class AppSettings:
     @touch_gestures_enabled.setter
     def touch_gestures_enabled(self, enabled: bool) -> None:
         self._settings.setValue(self.KEY_TOUCH_GESTURES, enabled)
+
+    @property
+    def show_gallery_plant_filters(self) -> bool:
+        """Whether plant gallery popups show the layer and function filters."""
+        return cast(bool, self._settings.value(
+            self.KEY_GALLERY_PLANT_FILTERS, self.DEFAULT_GALLERY_PLANT_FILTERS, type=bool,
+        ))
+
+    @show_gallery_plant_filters.setter
+    def show_gallery_plant_filters(self, enabled: bool) -> None:
+        self._settings.setValue(self.KEY_GALLERY_PLANT_FILTERS, enabled)
+
+    @property
+    def plant_map_icons_fixed(self) -> bool:
+        return cast(bool, self._settings.value(self.KEY_PLANT_MAP_ICONS_FIXED, True, type=bool))
+
+    @plant_map_icons_fixed.setter
+    def plant_map_icons_fixed(self, enabled: bool) -> None:
+        self._settings.setValue(self.KEY_PLANT_MAP_ICONS_FIXED, enabled)
+
+    @property
+    def hide_plant_svg_icons(self) -> bool:
+        return cast(bool, self._settings.value(self.KEY_HIDE_PLANT_SVG_ICONS, False, type=bool))
+
+    @hide_plant_svg_icons.setter
+    def hide_plant_svg_icons(self, hidden: bool) -> None:
+        self._settings.setValue(self.KEY_HIDE_PLANT_SVG_ICONS, hidden)
+
+    @property
+    def plant_map_icon_size(self) -> int:
+        size = cast(int, self._settings.value(self.KEY_PLANT_MAP_ICON_SIZE, 32, type=int))
+        return min(self.PLANT_MAP_ICON_SIZE_MAX, max(self.PLANT_MAP_ICON_SIZE_MIN, size))
+
+    @plant_map_icon_size.setter
+    def plant_map_icon_size(self, size: int) -> None:
+        self._settings.setValue(self.KEY_PLANT_MAP_ICON_SIZE, size)
+
+    @property
+    def plant_grid_dimensions(self) -> tuple[int, int]:
+        rows = cast(int, self._settings.value(self.KEY_PLANT_GRID_ROWS, 3, type=int))
+        columns = cast(int, self._settings.value(self.KEY_PLANT_GRID_COLUMNS, 3, type=int))
+        return (
+            min(self.PLANT_GRID_MAX_SIDE, max(1, rows)),
+            min(self.PLANT_GRID_MAX_SIDE, max(1, columns)),
+        )
+
+    @plant_grid_dimensions.setter
+    def plant_grid_dimensions(self, dimensions: tuple[int, int]) -> None:
+        rows, columns = dimensions
+        self._settings.setValue(self.KEY_PLANT_GRID_ROWS, rows)
+        self._settings.setValue(self.KEY_PLANT_GRID_COLUMNS, columns)
 
     @property
     def language(self) -> str:

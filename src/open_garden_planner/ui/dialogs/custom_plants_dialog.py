@@ -1,5 +1,7 @@
 """Dialog for managing custom plant species."""
 
+from copy import deepcopy
+
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QDialog,
@@ -18,6 +20,7 @@ from PyQt6.QtWidgets import (
 from open_garden_planner.core.plant_cycle_label import plant_cycle_label
 from open_garden_planner.models.plant_data import PlantSpeciesData
 from open_garden_planner.services import get_plant_library
+from open_garden_planner.ui.dialogs.edit_custom_plant_dialog import EditCustomPlantDialog
 from open_garden_planner.ui.theme import set_text_role
 
 
@@ -27,7 +30,9 @@ class CustomPlantsDialog(QDialog):
     Allows users to view, edit, and delete plants in their custom library.
     """
 
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(
+        self, parent: QWidget | None = None, *, kind: str | None = None, picker: bool = False,
+    ) -> None:
         """Initialize the custom plants dialog.
 
         Args:
@@ -39,6 +44,8 @@ class CustomPlantsDialog(QDialog):
         self.resize(800, 600)
 
         self._library = get_plant_library()
+        self._kind = kind
+        self._picker = picker or kind is not None
         self._selected_plant: PlantSpeciesData | None = None
         self._selected_plant_id: str | None = None
 
@@ -87,8 +94,7 @@ class CustomPlantsDialog(QDialog):
         self.table.setColumnHidden(4, True)
 
         self.table.itemSelectionChanged.connect(self._on_selection_changed)
-        # Double-clicking a row confirms the selection (picker convenience).
-        self.table.itemDoubleClicked.connect(lambda _item: self.accept())
+        self.table.itemDoubleClicked.connect(self._on_double_click)
         layout.addWidget(self.table)
 
         # Button row
@@ -101,6 +107,16 @@ class CustomPlantsDialog(QDialog):
         self.new_btn.clicked.connect(self._on_create_new)
         button_layout.addWidget(self.new_btn)
 
+        self.edit_btn = QPushButton(self.tr("Edit"))
+        self.edit_btn.setEnabled(False)
+        self.edit_btn.clicked.connect(self._on_edit)
+        button_layout.addWidget(self.edit_btn)
+
+        self.duplicate_btn = QPushButton(self.tr("Duplicate"))
+        self.duplicate_btn.setEnabled(False)
+        self.duplicate_btn.clicked.connect(self._on_duplicate)
+        button_layout.addWidget(self.duplicate_btn)
+
         button_layout.addStretch()
 
         # Delete button
@@ -110,7 +126,12 @@ class CustomPlantsDialog(QDialog):
         self.delete_btn.clicked.connect(self._on_delete)
         button_layout.addWidget(self.delete_btn)
 
-        layout.addLayout(button_layout)
+        if self._kind is None:
+            layout.addLayout(button_layout)
+        else:
+            for button in (self.new_btn, self.edit_btn, self.duplicate_btn, self.delete_btn):
+                button.setParent(self)
+                button.hide()
 
         # Info label
         self.info_label = QLabel()
@@ -129,14 +150,17 @@ class CustomPlantsDialog(QDialog):
     def _load_plants(self) -> None:
         """Load plants from the library into the table."""
         self.table.setRowCount(0)
-        plants = self._library.get_all_plants()
+        plants = [
+            (plant_id, plant) for plant_id, plant in self._library.get_all_plants()
+            if self._kind is None or plant.plant_kind == self._kind
+        ]
 
         for plant_id, plant in plants:
             row = self.table.rowCount()
             self.table.insertRow(row)
 
             # Common Name
-            common_item = QTableWidgetItem(plant.common_name or "")
+            common_item = QTableWidgetItem(plant.display_name)
             self.table.setItem(row, 0, common_item)
 
             # Scientific Name
@@ -163,23 +187,41 @@ class CustomPlantsDialog(QDialog):
         # Update info label
         count = len(plants)
         if count == 0:
-            self.info_label.setText(self.tr("No custom plants yet. Click 'Create New' to add one."))
+            self.info_label.setText(
+                self.tr("No custom plants of this kind.") if self._kind is not None
+                else self.tr("No custom plants yet. Click 'Create New' to add one.")
+            )
         else:
             self.info_label.setText(self.tr("{count} custom plant(s) in library").format(count=count))
 
     def _on_selection_changed(self) -> None:
         """Handle selection change in the table."""
-        selected_rows = self.table.selectedItems()
-        if selected_rows:
-            row = self.table.currentRow()
-            plant_id = self.table.item(row, 4).text()
-            self._selected_plant_id = plant_id
-            self._selected_plant = self._library.get_plant(plant_id)
-            self.delete_btn.setEnabled(True)
+        selection = self.table.selectionModel()
+        rows = selection.selectedRows() if selection is not None else []
+        plant_id_item = self.table.item(rows[0].row(), 4) if rows else None
+        plant_id = plant_id_item.text() if plant_id_item is not None else None
+        plant = self._library.get_plant(plant_id) if plant_id is not None else None
+        self._selected_plant_id = plant_id
+        self._selected_plant = plant
+        self.edit_btn.setEnabled(plant is not None)
+        self.duplicate_btn.setEnabled(plant is not None)
+        self.delete_btn.setEnabled(plant is not None)
+
+    def _on_double_click(self, item: QTableWidgetItem) -> None:
+        self.table.selectRow(item.row())
+        if self._picker:
+            self.accept()
         else:
-            self._selected_plant = None
-            self._selected_plant_id = None
-            self.delete_btn.setEnabled(False)
+            self._on_edit()
+
+    def _on_duplicate(self) -> None:
+        if self._selected_plant is None:
+            return
+        duplicate = deepcopy(self._selected_plant)
+        duplicate.source_id = ""
+        plant_id = self._library.add_plant(duplicate)
+        self._load_plants()
+        self._select_plant(plant_id)
 
     def _on_create_new(self) -> None:
         """Create a new custom plant."""
@@ -195,14 +237,29 @@ class CustomPlantsDialog(QDialog):
 
         # Reload table and select the new plant
         self._load_plants()
+        self._select_plant(plant_id)
 
-        # Find and select the new row
+    def _select_plant(self, plant_id: str) -> None:
         for row in range(self.table.rowCount()):
-            if self.table.item(row, 4).text() == plant_id:
+            item = self.table.item(row, 4)
+            if item is not None and item.text() == plant_id:
                 self.table.selectRow(row)
                 break
 
-        self.info_label.setText(self.tr("New plant created. Edit it in the Plant Details panel."))
+    def _on_edit(self) -> None:
+        plant_id = self._selected_plant_id
+        plant = self._selected_plant
+        if plant_id is None or plant is None:
+            return
+        editor = EditCustomPlantDialog(
+            plant, lambda edited: self._library.update_plant(plant_id, edited), self,
+        )
+        try:
+            if editor.exec() == QDialog.DialogCode.Accepted:
+                self._load_plants()
+                self._select_plant(plant_id)
+        finally:
+            editor.deleteLater()
 
     def _on_delete(self) -> None:
         """Delete the selected plant."""

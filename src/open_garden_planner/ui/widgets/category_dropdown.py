@@ -25,6 +25,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from open_garden_planner.app.settings import get_settings
+from open_garden_planner.core.object_types import ObjectType
 from open_garden_planner.core.tools import ToolType
 from open_garden_planner.ui.theme import set_text_role
 from open_garden_planner.ui.widgets.elided_label import ElidedLabel
@@ -274,6 +276,10 @@ class CategoryDropdown(QWidget):
     def __init__(self, category: GalleryCategory, parent: QWidget | None = None) -> None:
         super().__init__(parent, Qt.WindowType.Popup | Qt.WindowType.FramelessWindowHint)
         self._category = category
+        self._custom_kind = {
+            "tree": "tree", "shrub": "shrub", "flower": "perennial", "vegetable": "vegetable",
+        }.get(category.icon_name)
+        self._is_plant_category = any(item.species or item.plant_category for item in category.items)
         self._buttons: list[_ThumbnailButton] = []
         self._columns = GRID_COLS
         self._setup_ui()
@@ -308,9 +314,6 @@ class CategoryDropdown(QWidget):
         self._trait_scroll.setWidgetResizable(True)
         self._trait_scroll.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
         self._trait_scroll.setWidget(self.trait_filters)
-        self._trait_scroll.setVisible(
-            any(item.species or item.plant_category for item in self._category.items)
-        )
         layout.addWidget(self._trait_scroll)
 
         self._results = QScrollArea()
@@ -328,22 +331,67 @@ class CategoryDropdown(QWidget):
         self._empty = QLabel(self.tr("No matching items"), grid_widget)
         self._empty.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self._grid.addWidget(self._empty, 0, 0, 1, GRID_COLS)
+        self._custom_folder: QToolButton | None = None
+        if self._custom_kind is not None:
+            folder = QToolButton(grid_widget)
+            folder.setText(self.tr("Custom Plants"))
+            folder.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
+            folder.setFixedSize(TILE_WIDTH, TILE_HEIGHT)
+            style = folder.style()
+            if style is not None:
+                folder.setIcon(style.standardIcon(QStyle.StandardPixmap.SP_DirIcon))
+            folder.clicked.connect(self._choose_custom_plant)
+            self._custom_folder = folder
         for item in self._category.items:
             btn = _ThumbnailButton(item, grid_widget)
             btn.clicked_item.connect(self._on_item_clicked)
             self._buttons.append(btn)
+        self._refresh_trait_filter_visibility()
         self._apply_filter("")
+
+    def _refresh_trait_filter_visibility(self) -> None:
+        self._trait_scroll.setVisible(
+            self._is_plant_category and get_settings().show_gallery_plant_filters
+        )
 
     def _on_item_clicked(self, item: GalleryItem) -> None:
         self.tool_selected.emit(item.tool_type)
         self.item_selected.emit(item)
         self.close()
 
+    def _choose_custom_plant(self) -> None:
+        from open_garden_planner.ui.dialogs.custom_plants_dialog import CustomPlantsDialog
+
+        self.close()
+        dialog = CustomPlantsDialog(self.parentWidget(), kind=self._custom_kind)
+        dialog.setWindowTitle(self.tr("Custom Plants"))
+        try:
+            if dialog.exec() and (plant := dialog.selected_plant) is not None:
+                tool, object_type = {
+                    "tree": (ToolType.TREE, ObjectType.TREE),
+                    "shrub": (ToolType.SHRUB, ObjectType.SHRUB),
+                }.get(plant.plant_kind, (ToolType.PERENNIAL, ObjectType.PERENNIAL))
+                self._on_item_clicked(GalleryItem(
+                    plant.display_name, tool, object_type,
+                    species=plant.common_name or plant.scientific_name,
+                    species_record=plant.to_dict(),
+                ))
+        finally:
+            dialog.deleteLater()
+
     def _apply_filter(self, text: str) -> None:
         needle = text.strip().lower()
-        layers = self.trait_filters.layers
-        functions = self.trait_filters.functions
+        show_traits = not self._trait_scroll.isHidden()
+        layers = self.trait_filters.layers if show_traits else set()
+        functions = self.trait_filters.functions if show_traits else set()
         index = 0
+        if self._custom_folder is not None:
+            self._grid.removeWidget(self._custom_folder)
+            show_folder = not (needle or layers or functions)
+            if show_folder:
+                self._grid.addWidget(self._custom_folder, 0, 0)
+                index = 1
+            self._custom_folder.setVisible(show_folder)
         for btn in self._buttons:
             self._grid.removeWidget(btn)
             visible = gallery_matches(btn.item, needle, layers=layers, functions=functions)
@@ -372,6 +420,7 @@ class CategoryDropdown(QWidget):
         self._columns = max(1, min(GRID_COLS, columns))
         with QSignalBlocker(self._search_box):
             self._search_box.clear()
+        self._refresh_trait_filter_visibility()
         self.trait_filters.clear()
         self._apply_filter("")
         self._size_trait_controls(work_area.width(), work_area.height())

@@ -283,6 +283,14 @@ field's default or `None`) rather than swapped in wholesale. The `Confirm
 of the three online providers (`custom`, or a future `bundled`) skips the
 fetch entirely, since neither has an online detail endpoint.
 
+**Editing the custom library.** Manage Custom Plants opens a separate editor for
+the selected species. Save replaces the library record under its original ID
+and refreshes the selection. Cancel leaves the record untouched. Imported
+photos are embedded in the species record for use without the original file.
+Placed plants retain their own species snapshot. Editing a field on a placed
+plant updates only the corresponding library field. Assigning a custom species
+uses its populated calendar values ahead of bundled defaults.
+
 ### 6.3.1 Satellite Background Loading
 
 The File → Load Satellite Background… path resolves its credential at the application boundary: a non-empty Preferences value (`api_keys/google_maps_key`) wins, otherwise `OGP_GOOGLE_MAPS_KEY` from the process environment is used. `main.py` supports the project-root `.env` in source runs and an adjacent `.env` in packaged runs. The menu action is enabled from this same resolver and is refreshed after Preferences is accepted. When the dialog opens, the resolved key is passed explicitly to the JavaScript bridge and the background fetch worker; it is never part of the project snapshot or serialized image metadata.

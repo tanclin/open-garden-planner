@@ -276,6 +276,7 @@ src/open_garden_planner/
 │   │   ├── welcome_dialog.py
 │   │   ├── calibration_dialog.py
 │   │   ├── custom_plants_dialog.py
+│   │   ├── edit_custom_plant_dialog.py # Species fields and photo in the custom library
 │   │   ├── export_dialog.py
 │   │   ├── preferences_dialog.py
 │   │   ├── print_dialog.py

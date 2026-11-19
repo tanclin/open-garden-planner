@@ -10,11 +10,15 @@ without a QApplication and reused off the UI thread.
 
 from __future__ import annotations
 
+import base64
+import binascii
 import hashlib
 import logging
 import os
 import tempfile
 from pathlib import Path
+
+from PIL import Image, ImageOps
 
 from open_garden_planner.services.image_download import (
     THUMBNAIL_MAX_BYTES,
@@ -29,6 +33,34 @@ logger = logging.getLogger(__name__)
 _CACHE_DIR_NAME = "plant_thumbs"
 _TIMEOUT_SECONDS = 10
 _CACHE_MAX_BYTES = 24 * 1024 * 1024  # worst-case 2048² RGBA PNG plus encoding overhead
+_PHOTO_EDGE = 512
+_PHOTO_PREFIX = "data:image/png;base64,"
+_PHOTO_MAX_ENCODED = 2 * 1024 * 1024
+
+
+def import_plant_photo(path: Path) -> str:
+    """Normalize a chosen image into a portable, bounded library photo."""
+    with path.open("rb") as stream:
+        content = stream.read(THUMBNAIL_MAX_BYTES + 1)
+    if len(content) > THUMBNAIL_MAX_BYTES:
+        raise ValueError("Photo exceeds the permitted byte limit")
+    image = ImageOps.exif_transpose(decode_image(content, max_pixels=THUMBNAIL_MAX_PIXELS))
+    image.thumbnail((_PHOTO_EDGE, _PHOTO_EDGE), Image.Resampling.LANCZOS)
+    return _PHOTO_PREFIX + base64.b64encode(thumbnail_png(image)).decode("ascii")
+
+
+def embedded_photo_bytes(url: str) -> bytes | None:
+    """Read the editor's PNG format without accepting arbitrary data URLs."""
+    if not url.startswith(_PHOTO_PREFIX) or len(url) > _PHOTO_MAX_ENCODED:
+        return None
+    try:
+        content = base64.b64decode(url[len(_PHOTO_PREFIX):], validate=True)
+        if not content.startswith(b"\x89PNG\r\n\x1a\n"):
+            return None
+        decode_image(content, max_pixels=_PHOTO_EDGE ** 2, max_edge=_PHOTO_EDGE)
+    except (binascii.Error, ValueError, OSError, SyntaxError, Image.DecompressionBombError):
+        return None
+    return content
 
 
 def get_cache_dir() -> Path:
@@ -60,8 +92,12 @@ def is_cached(url: str) -> bool:
 
 def get_cached_thumbnail(url: str) -> Path | None:
     """Return the cached thumbnail path if it exists, else None."""
-    path = _cache_path(url)
-    if path.exists():
+    try:
+        path = _cache_path(url)
+        exists = path.exists()
+    except OSError:
+        return None
+    if exists:
         try:
             if path.stat().st_size > _CACHE_MAX_BYTES:
                 raise ValueError("Oversized cached thumbnail")
@@ -104,10 +140,16 @@ def fetch_thumbnail(url: str) -> Path | None:
         cached = get_cached_thumbnail(url)
         if cached is not None:
             return cached
-        image = fetch_image(url, max_bytes=THUMBNAIL_MAX_BYTES,
-                            max_pixels=THUMBNAIL_MAX_PIXELS, timeout=_TIMEOUT_SECONDS)
+        if url.startswith("data:"):
+            content = embedded_photo_bytes(url)
+            if content is None:
+                return None
+        else:
+            image = fetch_image(url, max_bytes=THUMBNAIL_MAX_BYTES,
+                                max_pixels=THUMBNAIL_MAX_PIXELS, timeout=_TIMEOUT_SECONDS)
+            content = thumbnail_png(image)
         path = _cache_path(url)
-        _publish_cache(path, thumbnail_png(image))
+        _publish_cache(path, content)
         return path
     except Exception:
         logger.warning("Thumbnail download or decoding failed")
