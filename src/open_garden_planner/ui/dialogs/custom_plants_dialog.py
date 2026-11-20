@@ -2,7 +2,7 @@
 
 from copy import deepcopy
 
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import QCoreApplication, Qt
 from PyQt6.QtWidgets import (
     QDialog,
     QDialogButtonBox,
@@ -219,7 +219,15 @@ class CustomPlantsDialog(QDialog):
             return
         duplicate = deepcopy(self._selected_plant)
         duplicate.source_id = ""
-        plant_id = self._library.add_plant(duplicate)
+        try:
+            plant_id = self._library.add_plant(duplicate, require_saved=True)
+        except OSError:
+            QMessageBox.warning(
+                self, self.windowTitle(), QCoreApplication.translate(
+                    "EditCustomPlantDialog", "Could not save changes to the plant library.",
+                ),
+            )
+            return
         self._load_plants()
         self._select_plant(plant_id)
 

@@ -4036,13 +4036,13 @@ Use 0.1 for DXF in mm, 100 for DXF in metres.</source>
         </message>
         <message>
             <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="240" />
-            <source>Dioecious Female (♀ only)</source>
-            <translation>Zweihäusig Weiblich (nur ♀)</translation>
+            <source>Dioecious (female flowers only)</source>
+            <translation>Zweihäusig Weiblich (nur weiblich)</translation>
         </message>
         <message>
             <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="239" />
-            <source>Dioecious Male (♂ only)</source>
-            <translation>Zweihäusig Männlich (nur ♂)</translation>
+            <source>Dioecious (male flowers only)</source>
+            <translation>Zweihäusig Männlich (nur männlich)</translation>
         </message>
         <message>
             <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="301" />
@@ -4317,8 +4317,8 @@ Use 0.1 for DXF in mm, 100 for DXF in metres.</source>
         </message>
         <message>
             <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="238" />
-            <source>Monoecious (separate ♂/♀ flowers)</source>
-            <translation>Einhäusig (getrennte ♂/♀ Blüten)</translation>
+            <source>Monoecious (separate male and female flowers)</source>
+            <translation>Einhäusig (getrennte männlich/weiblich Blüten)</translation>
         </message>
         <message>
             <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="285" />

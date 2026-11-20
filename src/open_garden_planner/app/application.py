@@ -5590,7 +5590,8 @@ class GardenPlannerApp(QMainWindow):
 
         dialog = CustomPlantsDialog(self)
         dialog.exec()
-        self.canvas_view.viewport().update()
+        if (viewport := self.canvas_view.viewport()) is not None:
+            viewport.update()
 
     def _on_check_companion_planting(self) -> None:
         """Run whole-plan companion planting analysis and show report."""
@@ -5684,7 +5685,8 @@ class GardenPlannerApp(QMainWindow):
             self._workspace.apply_look_settings()  # 3D quality, reduced motion (L1.4), sky (L7)
             # Canvas (#321): touch gestures take effect at once, like the look settings.
             self.canvas_view.set_touch_gestures_enabled(settings.touch_gestures_enabled)
-            self.canvas_view.viewport().update()
+            if (viewport := self.canvas_view.viewport()) is not None:
+                viewport.update()
             after = _agent_api_state()
             if before != after:
                 # Restart so a toggle, port, writes or token change takes effect.

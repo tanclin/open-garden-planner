@@ -10,10 +10,14 @@ from PyQt6.QtSvg import QSvgRenderer, QtSvg
 MAX_SVG_BYTES = 256 * 1024
 
 
-@lru_cache(maxsize=24)
-def plant_svg_renderer(svg: str) -> QSvgRenderer | None:
-    if not svg or len(svg) > MAX_SVG_BYTES:
+def plant_svg_renderer(svg: object) -> QSvgRenderer | None:
+    if not isinstance(svg, str) or not svg or len(svg) > MAX_SVG_BYTES:
         return None
+    return _parse_plant_svg(svg)
+
+
+@lru_cache(maxsize=24)
+def _parse_plant_svg(svg: str) -> QSvgRenderer | None:
     content = svg.encode("utf-8", errors="replace")
     if len(content) > MAX_SVG_BYTES or b"<!" in content:
         return None

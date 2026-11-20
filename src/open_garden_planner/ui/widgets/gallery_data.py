@@ -59,7 +59,7 @@ class GalleryItem:
         species: str = "",
         plant_category: PlantCategory | None = None,
         icon_name: str = "",
-        species_record: dict | None = None,
+        species_record: dict[str, Any] | None = None,
     ) -> None:
         self.name = name
         self.tool_type = tool_type

@@ -45,7 +45,10 @@ class TestMainToolbar:
 
     def test_toolbar_has_core_tools(self, toolbar) -> None:
         """Test toolbar has Select, Measure, Text, Callout and Journal Pin tools."""
-        assert len(toolbar._buttons) == 5
+        assert set(toolbar._buttons) == {
+            ToolType.SELECT, ToolType.MEASURE, ToolType.HAND, ToolType.TEXT,
+            ToolType.CALLOUT, ToolType.JOURNAL_PIN, ToolType.PLANT_GRID,
+        }
         assert ToolType.TEXT in toolbar._buttons
         assert ToolType.CALLOUT in toolbar._buttons
         assert ToolType.JOURNAL_PIN in toolbar._buttons

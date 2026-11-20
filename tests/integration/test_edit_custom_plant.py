@@ -244,6 +244,11 @@ def test_custom_kind_wiki_svg_and_badge(qtbot, monkeypatch, tmp_path):
     for zoom in (0.02, 12):
         view._draw_plant_map_icons(BadgePainter(zoom), QRectF(0, 0, 1000, 1000))
         assert drawn[-1].width() == drawn[-1].height() == 36
+    item.setVisible(False)
+    drawn.clear()
+    view._draw_plant_map_icons(BadgePainter(2), QRectF(0, 0, 1000, 1000))
+    assert not drawn
+    item.setVisible(True)
     settings.hide_plant_svg_icons = True
     drawn.clear()
     view._draw_plant_map_icons(BadgePainter(2), QRectF(0, 0, 1000, 1000))
@@ -315,6 +320,13 @@ def test_duplicate_has_its_own_id_and_double_click_edits(qtbot, monkeypatch, tmp
     monkeypatch.setattr(EditCustomPlantDialog, "exec", edit)
     dialog.table.itemDoubleClicked.emit(dialog.table.item(dialog.table.currentRow(), 0))
     assert len(opened) == 1
+
+    with monkeypatch.context() as patch:
+        patch.setattr(QMessageBox, "warning", lambda *_args: None)
+        patch.setattr(library, "_save", lambda: False)
+        dialog.duplicate_btn.click()
+    assert library.count == 2
+    assert dialog.selected_plant_id == duplicate_id
     picker = CustomPlantsDialog(picker=True)
     qtbot.addWidget(picker)
     picker.table.itemDoubleClicked.emit(picker.table.item(0, 0))

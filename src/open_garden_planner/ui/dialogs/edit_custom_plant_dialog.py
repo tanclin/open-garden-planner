@@ -3,6 +3,7 @@
 import math
 from collections.abc import Callable
 from enum import Enum
+from functools import partial
 from pathlib import Path
 from typing import Any
 
@@ -144,11 +145,15 @@ class EditCustomPlantDialog(QDialog):
                 ))
             self._field(
                 form, key, label, editor,
-                lambda editor=editor, text=text, value=value: (
-                    value if editor.text() == text
-                    else self._read_number(editor.text(), integer, bounds)
-                ),
+                partial(self._read_number_edit, editor, text, value, integer, bounds),
             )
+
+    def _read_number_edit(
+        self, editor: QLineEdit, original_text: str, original_value: int | float | None,
+        integer: bool, bounds: tuple[int, int] | None,
+    ) -> int | float | None:
+        text = editor.text()
+        return original_value if text == original_text else self._read_number(text, integer, bounds)
 
     def _read_number(
         self, text: str, integer: bool, bounds: tuple[int, int] | None,
@@ -336,9 +341,9 @@ class EditCustomPlantDialog(QDialog):
         self._enum_choice(form, "flower_type", self.tr("Flower Type"), {
             FlowerType.UNKNOWN: unknown,
             FlowerType.HERMAPHRODITE: self.tr("Hermaphrodite (perfect flowers)"),
-            FlowerType.MONOECIOUS: self.tr("Monoecious (separate ♂/♀ flowers)"),
-            FlowerType.DIOECIOUS_MALE: self.tr("Dioecious Male (♂ only)"),
-            FlowerType.DIOECIOUS_FEMALE: self.tr("Dioecious Female (♀ only)"),
+            FlowerType.MONOECIOUS: self.tr("Monoecious (separate male and female flowers)"),
+            FlowerType.DIOECIOUS_MALE: self.tr("Dioecious (male flowers only)"),
+            FlowerType.DIOECIOUS_FEMALE: self.tr("Dioecious (female flowers only)"),
         })
         self._enum_choice(form, "pollination_type", self.tr("Pollination"), {
             PollinationType.UNKNOWN: unknown,

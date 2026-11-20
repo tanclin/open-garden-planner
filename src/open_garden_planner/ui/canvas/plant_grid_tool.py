@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from math import atan2, degrees
-from typing import TYPE_CHECKING
+from math import atan2, degrees, isfinite
+from typing import TYPE_CHECKING, Any
 
 from PyQt6.QtCore import QCoreApplication, QLineF, QPointF, QRectF, QSignalBlocker, Qt
 from PyQt6.QtGui import QColor, QKeyEvent, QMouseEvent, QPainter, QPen, QTransform
@@ -12,12 +12,14 @@ from PyQt6.QtWidgets import (
     QDialogButtonBox,
     QFormLayout,
     QFrame,
+    QGraphicsItem,
     QHBoxLayout,
     QMessageBox,
     QSlider,
     QSpinBox,
     QToolButton,
     QVBoxLayout,
+    QWidget,
 )
 
 from open_garden_planner.app.settings import AppSettings, get_settings
@@ -46,6 +48,7 @@ if TYPE_CHECKING:
 
 _ACCENT = "#e38127"
 _MIN_SPAN = 2.0  # cm
+_MAX_PLANT_DIAMETER = 5000.0  # cm
 _HANDLES = ((-1, -1), (0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0))
 
 
@@ -64,7 +67,7 @@ class PlantGridTool(BaseTool):
         self._scene = scene
         self._scene.document_replaced.connect(self.cancel)
         self._origin: QPointF | None = None
-        self._species: dict | None = None
+        self._species: dict[str, Any] | None = None
         self._dimensions = (3, 3)
         self._diameter = 100.0
         self._size_edited = False
@@ -81,6 +84,12 @@ class PlantGridTool(BaseTool):
         self._size_button: QToolButton | None = None
         self._size_slider: QSlider | None = None
         self._preview_button: QToolButton | None = None
+
+    @property
+    def _viewport(self) -> QWidget:
+        viewport = self.view.viewport()
+        assert viewport is not None
+        return viewport
 
     def _edit_dimensions(self) -> bool:
         dialog = QDialog(self.view)
@@ -99,7 +108,7 @@ class PlantGridTool(BaseTool):
             settings = get_settings()
             settings.plant_grid_dimensions = self._dimensions
             settings.sync()
-            self.view.viewport().update()
+            self._viewport.update()
         dialog.deleteLater()
         return accepted
 
@@ -118,12 +127,16 @@ class PlantGridTool(BaseTool):
             if not dialog.exec() or dialog.selected_plant is None:
                 return False
             self._species = dialog.selected_plant.to_dict()
-            self._diameter = species_drop_diameter_cm(
+            diameter = species_drop_diameter_cm(
                 self._species, species_object_type(self._species).name,
             )
-            self._size_edited = False
+            self._diameter = (
+                max(_MIN_SPAN, min(_MAX_PLANT_DIAMETER, diameter))
+                if isfinite(diameter) else 100.0
+            )
+            self._size_edited = self._diameter != diameter
             self._sync_size_slider()
-            self.view.viewport().update()
+            self._viewport.update()
             return True
         finally:
             dialog.deleteLater()
@@ -133,7 +146,7 @@ class PlantGridTool(BaseTool):
             self._sync_size_slider()
             self._size_slider.setVisible(enabled)
             self._controls.adjustSize()
-        self.view.viewport().update()
+        self._viewport.update()
 
     def _sync_size_slider(self) -> None:
         slider = self._size_slider
@@ -145,12 +158,12 @@ class PlantGridTool(BaseTool):
     def _slide_plant_size(self, value: int) -> None:
         self._diameter = float(value)
         self._size_edited = True
-        self.view.viewport().update()
+        self._viewport.update()
 
     def _ensure_controls(self) -> QFrame:
         if self._controls is not None:
             return self._controls
-        controls = QFrame(self.view.viewport())
+        controls = QFrame(self._viewport)
         controls.setFrameShape(QFrame.Shape.StyledPanel)
         controls.setAutoFillBackground(True)
         layout = QVBoxLayout(controls)
@@ -167,7 +180,7 @@ class PlantGridTool(BaseTool):
                 "PlantGridTool", "Plant size slider",
             ), self._toggle_plant_size),
             ("eye", QCoreApplication.translate("PlantGridTool", "Preview selected plant"),
-             lambda _checked: self.view.viewport().update()),
+             lambda _checked: self._viewport.update()),
             ("check", QCoreApplication.translate("PlantGridTool", "Place plants"), self._commit),
         )
         for name, tip, action in actions:
@@ -293,7 +306,7 @@ class PlantGridTool(BaseTool):
             self._before = (QPointF(self._center), self._width, self._height, self._angle)
             self._diameter_before = self._diameter
             self._update_cursor(self._drag)
-        self.view.viewport().update()
+        self._viewport.update()
         return True
 
     def mouse_move(self, event: QMouseEvent, scene_pos: QPointF) -> bool:
@@ -307,7 +320,7 @@ class PlantGridTool(BaseTool):
             self._drag = None
             self._hover = self._handle_at(scene_pos)
             self._update_cursor(self._hover)
-        self.view.viewport().update()
+        self._viewport.update()
         return True
 
     def _transform_drag(self, point: QPointF, modifiers: Qt.KeyboardModifier) -> None:
@@ -323,7 +336,7 @@ class PlantGridTool(BaseTool):
         elif self._drag == "diameter":
             plant = self._transform().map(self._first_plant())
             delta = QLineF(plant, point).length() - QLineF(plant, self._drag_start).length()
-            diameter = max(_MIN_SPAN, min(max(5000, self._diameter_before),
+            diameter = max(_MIN_SPAN, min(_MAX_PLANT_DIAMETER,
                                           self._diameter_before + 2 * delta))
             if abs(diameter - self._diameter_before) > 1e-6:
                 self._size_edited = True
@@ -333,9 +346,9 @@ class PlantGridTool(BaseTool):
             sx, sy = self._drag
             transform = QTransform().translate(center.x(), center.y()).rotate(angle)
             inverse = transform.inverted()[0]
-            delta = inverse.map(point) - inverse.map(self._drag_start)
-            start_x, end_x = self._resize_edges(width, sx, sx * width / 2 + delta.x())
-            start_y, end_y = self._resize_edges(height, sy, sy * height / 2 + delta.y())
+            local_delta = inverse.map(point) - inverse.map(self._drag_start)
+            start_x, end_x = self._resize_edges(width, sx, sx * width / 2 + local_delta.x())
+            start_y, end_y = self._resize_edges(height, sy, sy * height / 2 + local_delta.y())
             self._width, self._height = end_x - start_x, end_y - start_y
             self._center = transform.map(QPointF((start_x + end_x) / 2, (start_y + end_y) / 2))
 
@@ -356,7 +369,7 @@ class PlantGridTool(BaseTool):
             self._drag = None
             self._hover = self._handle_at(scene_pos)
             self._update_cursor(self._hover)
-            self.view.viewport().update()
+            self._viewport.update()
         return True
 
     def key_press(self, event: QKeyEvent) -> bool:
@@ -420,7 +433,7 @@ class PlantGridTool(BaseTool):
         painter.restore()
         controls = self._controls
         if controls is not None:
-            viewport = self.view.viewport()
+            viewport = self._viewport
             x = round(max(p.x() for p in handles.values())) - controls.width()
             y = round(max(p.y() for p in handles.values())) + 12
             if y + controls.height() > viewport.height():
@@ -433,7 +446,7 @@ class PlantGridTool(BaseTool):
             return
         transform = self._transform()
         manager = getattr(self.view.window(), "_project_manager", None)
-        items = [
+        items: list[QGraphicsItem] = [
             build_species_plant(
                 self._scene, transform.map(point), self._species,
                 diameter_cm=self._diameter if self._size_edited else None,
@@ -474,4 +487,4 @@ class PlantGridTool(BaseTool):
             self._preview_button.setChecked(False)
         if self._controls is not None:
             self._controls.hide()
-        self.view.viewport().update()
+        self._viewport.update()

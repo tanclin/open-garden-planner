@@ -7,9 +7,9 @@ if not exist "%OGP_PYTHON%" (
     py -3.11 -m venv .venv || goto error
 )
 
-if not exist ".venv\ogp-installed" (
+"%OGP_PYTHON%" -c "import open_garden_planner, PyQt6.QtWidgets" >nul 2>&1
+if errorlevel 1 (
     "%OGP_PYTHON%" -m pip install -e . || goto error
-    type nul > ".venv\ogp-installed" || goto error
 )
 
 "%OGP_PYTHON%" -m open_garden_planner %* || goto error

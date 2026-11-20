@@ -378,7 +378,8 @@ class TestNothingReachesTheRealDirectory:
         seen = [(event, Path(path).name) for event, path in file_access
                 if under(path, pretend / "OpenGardenPlanner")]
         assert ("os.mkdir", "OpenGardenPlanner") in seen
-        assert ("open", "custom_plants.json") in seen
+        assert any(event == "open" and name.endswith(".tmp") for event, name in seen)
+        assert ("os.rename", "custom_plants.json") in seen
         assert (pretend / "OpenGardenPlanner" / "custom_plants.json").is_file()
 
     def test_the_watch_sees_a_write_into_a_directory(

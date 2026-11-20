@@ -3861,13 +3861,13 @@ Use 0,1 para DXF en mm, 100 para DXF en metros.</translation>
         </message>
         <message>
             <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="240" />
-            <source>Dioecious Female (♀ only)</source>
-            <translation>Dioica Femenina (solo ♀)</translation>
+            <source>Dioecious (female flowers only)</source>
+            <translation>Dioica Femenina (solo femenino)</translation>
         </message>
         <message>
             <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="239" />
-            <source>Dioecious Male (♂ only)</source>
-            <translation>Dioica Masculina (solo ♂)</translation>
+            <source>Dioecious (male flowers only)</source>
+            <translation>Dioica Masculina (solo masculino)</translation>
         </message>
         <message>
             <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="301" />
@@ -4142,8 +4142,8 @@ Use 0,1 para DXF en mm, 100 para DXF en metros.</translation>
         </message>
         <message>
             <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="238" />
-            <source>Monoecious (separate ♂/♀ flowers)</source>
-            <translation>Monoica (flores ♂/♀ separadas)</translation>
+            <source>Monoecious (separate male and female flowers)</source>
+            <translation>Monoica (flores masculino/femenino separadas)</translation>
         </message>
         <message>
             <location filename="../../ui/dialogs/edit_custom_plant_dialog.py" line="285" />

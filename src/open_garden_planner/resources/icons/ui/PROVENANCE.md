@@ -8,6 +8,9 @@ with `scripts/normalize_icons.py`; theme tokens follow ADR-039.
 authored for #664 on 2026-11-09; project license GPL-3.0-or-later. Normalized
 with `scripts/normalize_icons.py`; theme tokens follow ADR-039.
 
+`hand.svg` — original 24×24 open-hand geometry for the Hand tool, under the
+project license GPL-3.0-or-later. Normalized with `scripts/normalize_icons.py`.
+
 Every icon in this directory MUST have an entry here (a table row or a
 section) before it merges — same rule as the texture set (`ogp-asset-forge`:
 no provenance, no merge). `scripts/check_icon_conformance.py` cross-checks

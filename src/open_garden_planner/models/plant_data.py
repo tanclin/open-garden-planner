@@ -307,6 +307,10 @@ class PlantSpeciesData:
             PlantSpeciesData instance
         """
         # Convert enum strings back to enums
+        def text(key: str) -> str:
+            value = data.get(key)
+            return value if isinstance(value, str) else ""
+
         cycle = PlantCycle(data.get("cycle", "unknown"))
         growth_rate = GrowthRate(data.get("growth_rate", "unknown"))
         flower_type = FlowerType(data.get("flower_type", "unknown"))
@@ -334,10 +338,10 @@ class PlantSpeciesData:
             scientific_name=data["scientific_name"],
             common_name=data["common_name"],
             family=data.get("family", ""),
-            home_name=data.get("home_name") or "",
-            plant_kind=data.get("plant_kind") or "",
-            map_svg=data.get("map_svg") or "",
-            map_icon=data.get("map_icon") or "",
+            home_name=text("home_name"),
+            plant_kind=text("plant_kind"),
+            map_svg=text("map_svg"),
+            map_icon=text("map_icon"),
             show_map_icon=data.get("show_map_icon") is True,
             genus=data.get("genus", ""),
             cycle=cycle,

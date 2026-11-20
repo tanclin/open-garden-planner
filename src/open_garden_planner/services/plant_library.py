@@ -73,11 +73,12 @@ class PlantLibrary:
             return False
         return True
 
-    def add_plant(self, plant: PlantSpeciesData) -> str:
+    def add_plant(self, plant: PlantSpeciesData, *, require_saved: bool = False) -> str:
         """Add a custom plant to the library.
 
         Args:
             plant: The plant species data to add
+            require_saved: Raise OSError and roll back if the store cannot be written
 
         Returns:
             The unique ID assigned to the plant
@@ -88,8 +89,14 @@ class PlantLibrary:
             plant.source_id = str(uuid.uuid4())
 
         plant_id = plant.source_id
+        previous = self._plants.get(plant_id)
         self._plants[plant_id] = plant
-        self._save()
+        if not self._save() and require_saved:
+            if previous is None:
+                self._plants.pop(plant_id)
+            else:
+                self._plants[plant_id] = previous
+            raise OSError("Could not write the custom plant library")
         return plant_id
 
     def update_plant(self, plant_id: str, plant: PlantSpeciesData) -> bool:

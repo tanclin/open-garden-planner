@@ -1,6 +1,6 @@
 """Circle drawing tool."""
 
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from PyQt6.QtCore import QT_TR_NOOP, QCoreApplication, QLineF, QPointF, Qt
 from PyQt6.QtGui import QBrush, QColor, QKeyEvent, QMouseEvent, QPen
@@ -52,7 +52,7 @@ class CircleTool(BaseTool):
         self._is_drawing = False
         self._plant_category: object | None = None
         self._plant_species: str = ""
-        self._species_record: dict | None = None
+        self._species_record: dict[str, Any] | None = None
 
     def activate(self) -> None:
         """Called when this tool becomes the active tool.
@@ -66,7 +66,7 @@ class CircleTool(BaseTool):
         self._species_record = None
 
     def set_plant_info(
-        self, category: object | None = None, species: str = "", species_record: dict | None = None,
+        self, category: object | None = None, species: str = "", species_record: dict[str, Any] | None = None,
     ) -> None:
         """Set plant category/species for the next item created.
 

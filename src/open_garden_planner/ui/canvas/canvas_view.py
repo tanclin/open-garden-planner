@@ -310,6 +310,9 @@ class CanvasView(QGraphicsView):
         self._clipboard_operations = ClipboardOperations(self)
 
         self._canvas_scene = scene
+        self._map_icon_revision = -1
+        self._map_icon_items: list[CircleItem] = []
+        self._map_icon_padding = 0
         self._zoom_factor = 1.0
         self._grid_visible = False
         self._snap_enabled = True
@@ -381,6 +384,7 @@ class CanvasView(QGraphicsView):
         self._snap_index_dirty = True
         self._snap_index_revision = -1
         scene.changed.connect(self._on_scene_changed_for_snap)
+        scene.changed.connect(self._repaint_map_icon_bounds)
 
         # Shared typed-coordinate buffer (Package A US-A1/A2/A4).
         self._input_buffer = CoordinateInputBuffer(self)
@@ -2883,10 +2887,12 @@ class CanvasView(QGraphicsView):
         self._finish_pin_drag()
 
         tool = self._tool_manager.active_tool
-        if tool is not None and tool.tool_type == ToolType.HAND:
-            if tool.mouse_press(event, self.mapToScene(event.position().toPoint())):
-                event.accept()
-                return
+        if (
+            tool is not None and tool.tool_type == ToolType.HAND
+            and tool.mouse_press(event, self.mapToScene(event.position().toPoint()))
+        ):
+            event.accept()
+            return
 
         # ── Guide line handling ─────────────────────────────────────────────
         if self._guides_visible and event.button() == Qt.MouseButton.LeftButton:
@@ -4419,6 +4425,15 @@ class CanvasView(QGraphicsView):
         if self._guides_visible and self._canvas_scene.guide_lines:
             self._draw_guide_lines(painter, rect)
 
+    def _repaint_map_icon_bounds(self, rects: list[QRectF]) -> None:
+        """Expand dirty rectangles to cover badges that overhang their plant."""
+        padding = self._map_icon_padding
+        viewport = self.viewport()
+        if padding and viewport is not None:
+            for rect in rects:
+                bounds = self.mapFromScene(rect).boundingRect()
+                viewport.update(bounds.adjusted(-padding, -padding, padding, padding))
+
     def _draw_plant_map_icons(self, painter: QPainter, rect: QRectF) -> None:
         """Paint plant badges in view pixels so fixed size is independent of zoom."""
         from math import hypot
@@ -4430,6 +4445,20 @@ class CanvasView(QGraphicsView):
         from open_garden_planner.ui.plant_map_art import paint_map_svg
 
         settings = get_settings()
+        revision = self._canvas_scene.paint_revision
+        if revision != self._map_icon_revision:
+            self._map_icon_items = [
+                item for item in self._canvas_scene.items()
+                if isinstance(item, CircleItem) and is_plant_type(item.object_type)
+                and isinstance(record := item.metadata.get("plant_species"), dict)
+                and (record.get("show_map_icon") is True
+                     or record.get("data_source") == "custom"
+                     or record.get("map_svg") or record.get("map_icon"))
+            ]
+            self._map_icon_revision = revision
+        if not self._map_icon_items:
+            self._map_icon_padding = 0
+            return
         transform = painter.worldTransform()
         zoom = hypot(transform.m11(), transform.m12())
         if zoom <= 0:
@@ -4448,8 +4477,12 @@ class CanvasView(QGraphicsView):
         painter.setFont(font)
         painter.setPen(self.palette().text().color())
         library = None
-        for item in self._canvas_scene.items(rect.adjusted(-margin, -margin, margin, margin)):
-            if not isinstance(item, CircleItem) or not is_plant_type(item.object_type):
+        visible_region = rect.adjusted(-margin, -margin, margin, margin)
+        for item in self._map_icon_items:
+            if not item.isVisible():
+                continue
+            scene_center = item.mapToScene(item.rect().center())
+            if not visible_region.contains(scene_center):
                 continue
             record = item.metadata.get("plant_species", {})
             if not isinstance(record, dict):
@@ -4465,11 +4498,14 @@ class CanvasView(QGraphicsView):
                 continue
             svg = plant.map_svg if plant is not None else record.get("map_svg")
             icon = plant.map_icon if plant is not None else record.get("map_icon")
-            center = transform.map(item.mapToScene(item.rect().center()))
+            center = transform.map(scene_center)
             box = QRectF(center.x() - size / 2, center.y() - size / 2, size, size)
             if isinstance(svg, str) and svg and (hide_svg or paint_map_svg(painter, box, svg)):
+                if not hide_svg:
+                    self._map_icon_padding = max(self._map_icon_padding, size + 2)
                 continue
             if isinstance(icon, str) and icon.strip():
+                self._map_icon_padding = max(self._map_icon_padding, size + 2)
                 painter.drawText(box.adjusted(-size / 2, 0, size / 2, 0),
                                  Qt.AlignmentFlag.AlignCenter, icon[:16])
         painter.restore()
