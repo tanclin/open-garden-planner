@@ -203,7 +203,7 @@
         {
           "path": ".agents/skills/debug-verbose/references/039-case-study-us-12-10d-plant-soil-mismatch-border-never-appears-fixed-2026-05-03.md",
           "sha256": "ed9785ec8ced7fe7eccb3d8a67f104e3c750ff03f855cec865b9f0f0b4ad1c16",
-          "current_sha256": "ed9785ec8ced7fe7eccb3d8a67f104e3c750ff03f855cec865b9f0f0b4ad1c16"
+          "current_sha256": "9cd2420f739aaa676764be240f8a60ed05ad3b3240d0e3b91365f409a9398313"
         },
         {
           "path": ".agents/skills/debug-verbose/references/040-case-study-data-fields-exist-on-the-model-but-no-ui-to-set-them-us-12-10d-fixed-2026-.md",
@@ -1058,7 +1058,7 @@
         {
           "path": ".agents/skills/ogp-architecture-contract/references/003-1-invariants-the-heart-of-this-skill.md",
           "sha256": "e465ebd6f8c9ad9470cff566901ec5795418fac90aeac5373e7d72d6034c8944",
-          "current_sha256": "d1d28f04e0883456c157a21e13af8ea17449f6a0777d842d7181efb2718ed933"
+          "current_sha256": "0df1ca2ecb83d5ee49cabc632cf2333b1ad044f0e266d7085dab46f70881d5cd"
         },
         {
           "path": ".agents/skills/ogp-architecture-contract/references/004-2-module-map-and-dependency-rules.md",
@@ -1603,7 +1603,7 @@
         {
           "path": ".claude/skills/debug-verbose/references/039-case-study-us-12-10d-plant-soil-mismatch-border-never-appears-fixed-2026-05-03.md",
           "sha256": "ed9785ec8ced7fe7eccb3d8a67f104e3c750ff03f855cec865b9f0f0b4ad1c16",
-          "current_sha256": "ed9785ec8ced7fe7eccb3d8a67f104e3c750ff03f855cec865b9f0f0b4ad1c16"
+          "current_sha256": "9cd2420f739aaa676764be240f8a60ed05ad3b3240d0e3b91365f409a9398313"
         },
         {
           "path": ".claude/skills/debug-verbose/references/040-case-study-data-fields-exist-on-the-model-but-no-ui-to-set-them-us-12-10d-fixed-2026-.md",
@@ -2458,7 +2458,7 @@
         {
           "path": ".claude/skills/ogp-architecture-contract/references/003-1-invariants-the-heart-of-this-skill.md",
           "sha256": "e465ebd6f8c9ad9470cff566901ec5795418fac90aeac5373e7d72d6034c8944",
-          "current_sha256": "d1d28f04e0883456c157a21e13af8ea17449f6a0777d842d7181efb2718ed933"
+          "current_sha256": "0df1ca2ecb83d5ee49cabc632cf2333b1ad044f0e266d7085dab46f70881d5cd"
         },
         {
           "path": ".claude/skills/ogp-architecture-contract/references/004-2-module-map-and-dependency-rules.md",

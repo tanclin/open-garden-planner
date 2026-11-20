@@ -87,7 +87,7 @@ def test_an_empty_real_shard_fails_instead_of_passing(tmp_path: Path) -> None:
     (tmp_path / "test_one.py").write_text("def test_one():\n    pass\n", encoding="utf-8")
     run = subprocess.run(
         [sys.executable, "-m", "pytest", "test_one.py", "-p", "scripts.ci_coverage_shard",
-         "--coverage-shard=1/2", "-n", "0"],
+         "--coverage-shard=1/2", "--rootdir", str(tmp_path), "-n", "0"],
         cwd=tmp_path, env=dict(os.environ, PYTHONPATH=str(ROOT)),
         text=True, capture_output=True, timeout=60,
     )
